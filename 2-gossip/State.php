@@ -43,6 +43,9 @@
                             'content' => $data,
                         ]
                     ]));
+                    
+                    //var_dump( $peerState ); // This shows the values of all nodes as a dump
+                    
                     if (!$peerState) {
                         unset($this->state[$p]);
                         $this->save();
@@ -100,9 +103,6 @@
             return implode("\n", $data);
         }
 
-
-
-
         // Ive created these below methods
         public function randomSession() {
 
@@ -114,7 +114,7 @@
         public function incrementVersion() {
             
             // Find current version
-            $version = isset($this->state[$this->port]['version']) ?? 0;
+            $version = $this->state[$this->port]['version'];
             
             // Increment to new version
             $version++;
@@ -124,15 +124,19 @@
 
         public function save() {
             
+            
             if (file_exists($this->file)) {
-                $balances = json_decode(file_get_contents($this->file), true);
-                $balances[$this->port] = $this->state[$this->port];
+                $states = json_decode(file_get_contents($this->file), true);
+                
+                foreach ( $this->state as $port => $data ) {
+                    $states[$port] = $data;
+                }
+                
             } else {
-                $balances = $this->state; // Default user added on creation
+                $states = $this->state; // Default create new states list
             }
             
-            file_put_contents($this->file, json_encode($balances));
-            
+            file_put_contents($this->file, json_encode($states));
         }
 
     }
