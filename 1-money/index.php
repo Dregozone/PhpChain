@@ -10,10 +10,10 @@
     }
 
     $action = isset($_SERVER['PATH_INFO'])  ? strtolower($_SERVER['PATH_INFO']) : NULL;
-    $user   = isset($_GET['user'])          ? strtolower($_GET['user'])         : NULL;
-    $from   = isset($_GET['from'])          ? strtolower($_GET['from'])         : NULL;
-    $to     = isset($_GET['to'])            ? strtolower($_GET['to'])           : NULL;
-    $amount = isset($_GET['amount'])        ? strtolower($_GET['amount'])       : NULL;
+    $user   = isset($_REQUEST['user'])          ? strtolower($_REQUEST['user'])         : NULL;
+    $from   = isset($_REQUEST['from'])          ? strtolower($_REQUEST['from'])         : NULL;
+    $to     = isset($_REQUEST['to'])            ? strtolower($_REQUEST['to'])           : NULL;
+    $amount = isset($_REQUEST['amount'])        ? strtolower($_REQUEST['amount'])       : NULL;
 
     switch ($action) {
         case '/balance':    // Check balance of a user
