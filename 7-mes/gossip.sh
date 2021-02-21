@@ -7,7 +7,7 @@ else
     echo "Bootstrapping network with node $PEER"
     peerPort=`cat data/$PEER.port`
 fi
-rm -rf data/$USER.state data/$USER.port data/$USER.key
+rm -rf data/$USER.json
 port=8000
 retry=30
 while [ $retry -gt 0 ]
@@ -23,4 +23,4 @@ done
 echo $port > data/$USER.port
 php -S localhost:$port &
 echo ""
-php bin/fabcoin.php $port $peerPort
+php gossip.php $port $peerPort

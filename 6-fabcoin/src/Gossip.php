@@ -40,8 +40,31 @@
         }
         
         public function withPeer($port) {
-            //
+            
+            $peerState = $this->gossip($port);
+            if ( !$peerState ) {
+                unset( $this->state->peersp[$port] );
+                $this->state->save();
+            } else {
+                $this->state->update($peerState);
+            }
         }
         
+        private function gossip($port) : ?State {
+            
+            $data = base64_encode(serialize($this->state));
+            $peerState = @file_get_contents('http://localhost:'.$port.'/gossip', null, stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Content-type: application/json\r\nContent-length: ".strlen($data)."\r\n",
+                    'content' => $data,
+                ]
+            ]));
+            
+            
+            
+            
+            
+        }
         
     }
