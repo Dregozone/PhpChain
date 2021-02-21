@@ -27,7 +27,7 @@
         
         public function isValid() : bool {
             
-            return PoW::isValidNonce($this->message.$this->previous, $this->nonce);
+            return PoW::isValidNonce($this->message.$this->previous, $this->nonce) && $this->transaction->isValid();
         }
         
         public function __toString() : string {
