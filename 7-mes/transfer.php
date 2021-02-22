@@ -4,11 +4,13 @@
 
     $user = strtolower(getenv('USER'));
     $port = (int) $argv[1];
-    $peerPort = isset($argv[2]) ? (int) $argv[2] : null;
+    $message = isset($argv[2]) ? (string) $argv[2] : '';
     
     //printf("Listening for %s on port %d\n", $user, $port);
     //if ( $peerPort ) {
     //    printf("Connecting to %d\n", $peerPort);
     //}
 
-    (new State($user, $port))->updateTo("NewerSession");
+    printf( "Setting user $user on port $port to message $message\n" );
+
+    (new State($user, $port))->updateTo($message);

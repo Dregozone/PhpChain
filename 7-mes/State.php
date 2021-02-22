@@ -127,7 +127,7 @@
         public function incrementVersion() {
             
             // Find current version
-            $version = $this->state[$this->port]['version'];
+            $version = isset($this->state[$this->port]) ? $this->state[$this->port]['version'] : 0;
             
             // Increment to new version
             $version++;
