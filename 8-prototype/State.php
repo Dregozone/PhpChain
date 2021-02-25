@@ -12,26 +12,17 @@
 
         public function __construct($user, $port=null, $peerPort=null) {
 
-            
-            
-            
             $this->user = $user;
             $this->port = $port;
             $this->peerPort = $peerPort;
             
-            //$this->sessions = explode("\n", file_get_contents(__DIR__.'/data/sessions.txt'));
-            
             $this->file = __DIR__.'/data/'.$user.'.json';
-            
-            // Pull my most recently saved data
-            //$this->reload();
             
             if ($this->peerPort && !isset($this->state[$this->peerPort])) {
                 $this->state[$this->peerPort] = ['user' => '', 'session' => '', 'version' => 0];
             }
             
             if ($this->port && !isset($this->state[$this->port])) {
-                //$this->updateMine();
                 $this->state[$this->port] = ['user' => $user, 'session' => '', 'version' => 0];
             }
             
@@ -41,11 +32,14 @@
 
         public function loop() {
 
-            $i = 0;
+            $hasChanged = true;
             
             while(true) {
                 
-                printf("\033[37;40m Current state \033[39;49m\n%s\n", $this);
+                if ( $hasChanged ) {
+                    printf("\033[37;40m Current state \033[39;49m\n%s\n", $this);
+                    $hasChanged = false;
+                }
                 
                 foreach ($this->state as $p => $data) {
                     
@@ -63,8 +57,6 @@
                         ]
                     ]));
                     
-                    //var_dump( $peerState ); // This shows the values of all nodes as a dump
-                    
                     // If there is a peer, check my values against theirs
                     if ( !$peerState ) {
                         // There is no peer, skip
@@ -72,42 +64,24 @@
                         
                         $decodedPeerState = json_decode($peerState, true);
                         
-                        printf("There is a peer\n");
-                        
-                        //printf("\n\n\npeerState\n");
-                        //var_dump( $peerState );////
-                        
-                        //printf("\n\n\nDecoded peerState\n");
-                        //var_dump( $decodedPeerState );////
-                        
                         foreach ( $decodedPeerState as $port => $data ) {
                             if ( 
                                 !isset($this->state[$port]) || 
                                 ( $this->state[$port]['version'] < $data['version'] ) || 
                                 ( $this->state[$port]['user'] == "" && $data['user'] != "" ) 
-                            ) { // If the port doesnt exist in my data, or the data for this port is incomplete
-                                
-                                printf("Im updating from my peer\n");
+                            ) { // If the port doesnt exist in my data, or the data for this port is incomplete, or peer version is higher
                                 
                                 // Copy my peers data to my own state
                                 $this->state[$port]['user'] = $data['user'];
                                 $this->state[$port]['session'] = $data['session'];
                                 $this->state[$port]['version'] = $data['version'];
+                                
+                                $hasChanged = true;
                             }
                         }
                         
                         $this->save();
-                    }
-                    
-                    /*
-                    printf("\n\n %s's state: \n", $this->user );
-                    var_dump( $this->state );
-                    printf("\n\n");
-                    
-                    printf("\n\n %s's Peer's state(s): \n", $this->user );
-                    var_dump( $peerState );
-                    printf("\n\n");
-                    */                  
+                    }             
                     
                     if (!$peerState) {
                         unset($this->state[$p]);
@@ -121,13 +95,6 @@
                 $this->reload();
                 
                 usleep(rand(300000, 3000000));
-                
-                /*
-                if (++$i % 2) {
-                    $this->updateMine();
-                    printf("\033[37;40m  Favourite session updated  \033[39;49m\n");
-                }
-                */
             }
         }
 
@@ -135,16 +102,6 @@
 
             $this->state = file_exists($this->file) ? json_decode(file_get_contents($this->file), true) : [];
         }
-
-        /*
-        public function updateMine() {
-
-            $session = $this->randomSession();
-            $version = $this->incrementVersion();
-            $this->state[$this->port] = ['user' => $this->user, 'session' => $session, 'version' => $version];
-            $this->save();
-        }
-        */
 
         public function update($state) {
 
@@ -179,16 +136,6 @@
             return implode("\n", $data);
         }
 
-        // Ive created these below methods
-        /*
-        public function randomSession() {
-
-            $number = rand(1, 3);
-
-            return $this->user . $this->sessions[$number];
-        }
-        */
-
         public function incrementVersion() {
             
             // Find current version
@@ -212,15 +159,9 @@
                 
                 if ( is_array($this->state) ) {
                     
-                    //printf("This is array");
-                    
                     foreach ( $this->state as $port => $data ) { // Why is this throwing an error ////
                         $states[$port] = $data;
                     }
-                } else {
-                    //printf("Caught foreach warning\n");
-                    //var_dump( $this->state );
-                    //var_dump( gettype($this->state) );
                 }
                 
             } else {
@@ -258,5 +199,4 @@
             //// (loop until values are updated)
             
         }
-
     }
