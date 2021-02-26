@@ -177,26 +177,33 @@
             
             $state = json_decode(file_get_contents($file), true);
             
-            $version = $state[(int)$port]['version']; //Get current version
-            $version++; // Increment version for this change
+            $oldVersion = $state[(int)$port]['version']; //Get current version
+            $newVersion = $curVersion = $oldVersion;
+            $newVersion++; // Increment version for this change
             
-            $state[(int)$port] = ['user' => $user, 'session' => $value, 'version' => $version];
-            
-            if (file_exists($file)) {
-                $states = json_decode(file_get_contents($file), true);
+            // Sometimes the transactions would get lost in transmissions, implemented a rough loop to validate update was made before moving on
+            while ( $curVersion == $oldVersion ) { // While the update has not changed
                 
-                foreach ( $state as $ports => $data ) {
-                    $states[$ports] = $data;
+                //printf("Updating %s on port %d to value %s (v %d to v %d) [Currently v %d]\n", $user, $port, $value, $oldVersion, $newVersion, $curVersion);
+                
+                $state = json_decode(file_get_contents($file), true);
+                
+                $curVersion = $state[(int)$port]['version']; //Get current version
+                
+                $state[(int)$port] = ['user' => $user, 'session' => $value, 'version' => $newVersion];
+            
+                if (file_exists($file)) {
+                    $states = json_decode(file_get_contents($file), true);
+
+                    foreach ( $state as $ports => $data ) {
+                        $states[$ports] = $data;
+                    }
+
+                } else {
+                    $states = $state; // Default create new states list
                 }
-                
-            } else {
-                $states = $state; // Default create new states list
-            }
-            
-            file_put_contents($file, json_encode($states));
-            
-            // Check the value has been added
-            //// (loop until values are updated)
-            
+
+                file_put_contents($file, json_encode($states));
+            }            
         }
     }
