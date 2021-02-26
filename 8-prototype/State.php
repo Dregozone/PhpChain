@@ -190,6 +190,25 @@
                 
                 $curVersion = $state[(int)$port]['version']; //Get current version
                 
+                
+                // Blockchain stuff here...
+                ////
+                /*
+                if ( $state[(int)$port]['session'] == "" ) { // This would be the first transaction
+                    // Create a new blockchain
+                    $blockchain = new \Blockchain();
+                    $blockchain->add($value);
+                    $serialisedBlockchain = serialise($blockchain);
+                } else { // Add to the existing blockchain
+                    $serialisedBlockchain = $state[(int)$port]['session'];
+                    $blockchain = unserialise($serialisedBlockchain); // This is now a Blockchain object
+                    $blockchain->add($value);
+                    $serialisedBlockchain = serialise($blockchain); // Use this in place of session value below
+                }
+                */
+                
+                
+                
                 $state[(int)$port] = ['user' => $user, 'session' => $value, 'version' => $newVersion];
             
                 if (file_exists($file)) {
@@ -204,6 +223,8 @@
                 }
 
                 file_put_contents($file, json_encode($states));
-            }            
+            }
+            
+            return true;
         }
     }

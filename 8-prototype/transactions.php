@@ -13,13 +13,10 @@
         $port = file_get_contents("data/".$user.".port"); // Grab the port for this user
     }
 
-    if ( $user && $operation && $port ) { // If entered data is good
+    if ( $user && $operation && $port && State::updateValue( $user, $port, $operation ) ) { // If entered data is good and the transaction is added
         printf("Adding transaction -\n  Operator: %s (Port: %d)\n  Operation: %s\n  Datetime: %s\n", $user, $port, $operation, $datetime->format("Y-m-d H:i:s"));
         
     } else {
         printf("Failed to add! Use 'php transactions.php {user} {operation}'\n");
         die(); // Bad data input
     }
-
-
-    State::updateValue( $user, $port, $operation );
