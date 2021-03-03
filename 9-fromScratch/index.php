@@ -1,6 +1,6 @@
 <?php 
 
-    require_once 'State.php';
+    require_once 'classes/State.php';
 
     if ( '/gossip' == $_SERVER['PATH_INFO'] && 'POST' == $_SERVER['REQUEST_METHOD'] ) {
         $state = new State(strtolower(getenv('USER')));

@@ -16,7 +16,7 @@
             $this->port = $port;
             $this->peerPort = $peerPort;
             
-            $this->file = __DIR__.'/data/'.$user.'.json';
+            $this->file = 'data/'.$user.'.json';
             
             if ($this->peerPort && !isset($this->state[$this->peerPort])) {
                 $this->state[$this->peerPort] = ['user' => '', 'session' => '', 'version' => 0];
