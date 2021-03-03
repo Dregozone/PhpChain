@@ -118,7 +118,7 @@
             } else {
                 
                 foreach ( $this->sns as $port => $data ) {
-                    if ( array_key_exists($sn, $data['session']) ) {
+                    if ( is_array($data['session']) && array_key_exists($sn, $data['session']) ) {
                         
                         return unserialize( $data['session'][$sn] );
                     }

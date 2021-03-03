@@ -5,7 +5,7 @@
         private $data;
         private $blockchain = []; // Array of blocks becomes the blockchain
 
-        public function __construct(string $data) {
+        public function __construct(Transaction $data) {
             $this->data = $data;
             $this->blockchain[] = $this->createGenesisBlock();
         }
