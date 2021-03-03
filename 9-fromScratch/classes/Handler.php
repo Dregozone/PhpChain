@@ -21,11 +21,13 @@
 
         public function saveToFile() {
             
+            /*
             echo "Saving against user $this->user (Port $this->port)";
             
             echo "<pre>";
             print_r( $this->sns );
             echo "</pre>";
+            */
             
             file_put_contents($this->file, json_encode($this->sns));
         }
@@ -71,11 +73,10 @@
                     
                     if ( array_key_exists($sn, $this->sns[$port]['session']) ) { // Check for this SN on my port
                 
+                        // Found on another port
                         // Change user and port to record this new transaction against
                         $this->user = $this->sns[$port]['user'];
                         $this->port = $port;
-                        
-                        echo "Found on another port! ($this->user on port $this->port)";
                         
                         $this->sns[$port]['session'][$sn] = unserialize($this->sns[$port]['session'][$sn]);
                         $this->sns[$port]['session'][$sn]->addBlock( new Block( $action ) );

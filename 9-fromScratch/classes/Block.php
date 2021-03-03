@@ -25,7 +25,7 @@
 
         public function calculateHash() {
             
-            return hash("sha256", $this->sequence . $this->datetime . $this->data . $this->prevHash);
+            return hash("sha256", $this->sequence . $this->datetime . serialize($this->data) . $this->prevHash);
         }
 
         public function setPrevHash($prevHash) {

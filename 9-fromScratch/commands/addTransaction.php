@@ -18,7 +18,9 @@
 
         $handler->loadFromFile(); // Pull in this users latest values
 
-            $handler->addTransaction($sn, $action); // SN, What
+            $now = new \Datetime();
+            $transaction = new Transaction($user, $action, $now->format("Y-m-d H:i:s"), '', 'Computer 1', '');
+            $handler->addTransaction($sn, $transaction);
 
         $handler->saveToFile(); // Save back to file for gossiping
 
