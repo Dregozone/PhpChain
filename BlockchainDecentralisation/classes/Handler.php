@@ -19,16 +19,7 @@
             }
         }
 
-        public function saveToFile() {
-            
-            /*
-            echo "Saving against user $this->user (Port $this->port)";
-            
-            echo "<pre>";
-            print_r( $this->sns );
-            echo "</pre>";
-            */
-            
+        public function saveToFile() {            
             file_put_contents($this->file, json_encode($this->sns));
         }
 
@@ -96,6 +87,48 @@
             return true;
         }
 
+        public function showAllTransactions( Blockchain $blockchain ) {
+            
+            echo "<h2>Showing all transactions</h2>";
+            
+            foreach ( $blockchain->getBlockchain() as $block ) {
+                
+                echo "<br />Printing next...<br />";
+                
+                $this->outputBlock( $block );
+            }
+        }
+        
+        public function showLastTransaction( Blockchain $blockchain ) {
+            
+            echo "<h2>Showing last transaction</h2>";
+            
+            $this->outputBlock( $blockchain->getLastBlock() );
+        }
+        
+        private function outputBlock(Block $block) {
+            
+            $blockInfo = $block->getInfo(); // When was the block added, who added the block, curHash, prevHash, ...
+            $transactionInfo = $blockInfo["data"]->getData(); // Array of who, what, when, why, where, how
+            
+            echo '
+                <table border="1">
+            ';
+            
+            foreach ( $transactionInfo as $index => $value ) {
+                echo '
+                    <tr>
+                        <th>' . $index . '</th>
+                        <td>' . $value . '</td>
+                    </tr>
+                ';
+            }
+            
+            echo '
+                </table>
+            ';
+        }
+        
         public function setSns($sns) {
             $this->sns[$this->port]['session'] = $sns;
         }

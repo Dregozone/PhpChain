@@ -4,6 +4,7 @@
     {
         private $data;
         private $blockchain = []; // Array of blocks becomes the blockchain
+        private $difficulty = 5; // Difficulty is number of leading 0s required for PoW
 
         public function __construct(Transaction $data) {
             $this->data = $data;
@@ -21,11 +22,16 @@
         public function addBlock(Block $block) {
             
             $block->setPrevHash($this->getLastBlock()->getCurHash());
-            $block->setCurHash($block->calculateHash());
+            
+            $block->mineBlock($this->difficulty);
 
             $block->setSequence( sizeof( $this->blockchain ) );
 
+            // Attempt to add the block during gossip
             $this->blockchain[] = $block;
+            
+            // In the case that an update was performed during my new block addition, re-add the block to avoid missed transactions
+            ////
         }
 
         public function isValid() {

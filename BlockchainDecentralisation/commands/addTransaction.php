@@ -1,9 +1,9 @@
 <?php 
 
-    require_once("../classes/Transaction.php");
-    require_once("../classes/Block.php");
-    require_once("../classes/Blockchain.php");
-    require_once("../classes/Handler.php");
+    require "../classes/Transaction.php";
+    require "../classes/Block.php";
+    require "../classes/Blockchain.php";
+    require "../classes/Handler.php";
 
     $user = $_GET["user"] ?? null;
     $sn = $_GET["sn"] ?? null;
@@ -24,8 +24,8 @@
 
         $handler->saveToFile(); // Save back to file for gossiping
 
-        echo "Successfully added transaction $action to SN: $sn.";
+        echo "<br />Successfully added transaction $action to SN: $sn.";
 
     } else {
-        echo "Missing required parameters: user, sn, action";
+        echo "<br />Missing required parameters: user, sn, action";
     }

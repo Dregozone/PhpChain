@@ -14,6 +14,12 @@
 
     $output = $handler->getSn($sn);
 
+    /*
     echo "<pre>";
     print_r( $output );
     echo "</pre>";
+    */
+
+    $handler->showAllTransactions($output);
+
+    $handler->showLastTransaction($output);
