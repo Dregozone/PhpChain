@@ -14,12 +14,14 @@
 
     $output = $handler->getSn($sn);
 
-    /*
-    echo "<pre>";
-    print_r( $output );
-    echo "</pre>";
-    */
+    if ( $output !== false ) { // If the searched SN does exist
+        if ( !$handler->showAllTransactions($output) ) {
+            echo "<br />Failed to display all transactions.";
+        }
 
-    $handler->showAllTransactions($output);
-
-    $handler->showLastTransaction($output);
+        if ( !$handler->showLastTransaction($output) ) {
+            echo "<br />Failed to display last transaction.";
+        }
+    } else {
+        echo "<br />This SN doesnt have any transactions yet.";
+    }

@@ -87,7 +87,12 @@
             return true;
         }
 
-        public function showAllTransactions( Blockchain $blockchain ) {
+        public function showAllTransactions( $blockchain ) {
+            
+            if ( $blockchain === null ) { // There are no results for this transaction search yet
+                
+                return false;
+            }
             
             echo "<h2>Showing all transactions</h2>";
             
@@ -99,7 +104,12 @@
             }
         }
         
-        public function showLastTransaction( Blockchain $blockchain ) {
+        public function showLastTransaction( $blockchain ) {
+            
+            if ( $blockchain === null ) { // There are no results for this transaction search yet
+                
+                return false;
+            }
             
             echo "<h2>Showing last transaction</h2>";
             
@@ -157,7 +167,7 @@
                     }
                 }
                 
-                echo "SN not found!";
+                return false; // SN not found
             }
         }
     }

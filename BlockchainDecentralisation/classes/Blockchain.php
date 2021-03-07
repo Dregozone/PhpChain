@@ -14,6 +14,9 @@
         private function createGenesisBlock() { // Initialisation
             
             $genesis = new Block($this->data, "0");
+            
+            $genesis->mineBlock($this->difficulty);
+            
             $genesis->setSequence(0);
 
             return $genesis;
