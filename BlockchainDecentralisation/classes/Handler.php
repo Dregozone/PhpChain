@@ -102,6 +102,8 @@
                 
                 $this->outputBlock( $block );
             }
+            
+            return true;
         }
         
         public function showLastTransaction( $blockchain ) {
@@ -114,6 +116,8 @@
             echo "<h2>Showing last transaction</h2>";
             
             $this->outputBlock( $blockchain->getLastBlock() );
+            
+            return true;
         }
         
         private function outputBlock(Block $block) {
