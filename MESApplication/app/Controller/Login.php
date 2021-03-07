@@ -2,7 +2,7 @@
     
     namespace app\Controller;
 
-    Class Home 
+    Class Login 
     {
         private $model;
         

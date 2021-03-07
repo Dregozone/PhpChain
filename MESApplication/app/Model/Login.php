@@ -2,7 +2,7 @@
 
     namespace app\Model;
 
-    Class Home 
+    Class Login 
     {
         
         public function __construct() {
