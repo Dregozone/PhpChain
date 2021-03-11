@@ -87,6 +87,29 @@
             return true;
         }
 
+        private function startTable( $blockchain ) {
+            
+            echo '
+                <table border="1" class="results">
+                    <tr>
+            ';
+                  
+            foreach ( $blockchain->getLastBlock()->getInfo()["data"]->getData() as $index => $value ) {
+                echo "<th>{$index}</th>";
+            }
+              
+            echo '
+                    </tr>
+            ';
+        }
+        
+        private function endTable() {
+            
+            echo '
+                </table>
+            ';
+        }
+        
         public function showAllTransactions( $blockchain ) {
             
             if ( $blockchain === null ) { // There are no results for this transaction search yet
@@ -96,12 +119,13 @@
             
             echo "<h2>Showing all transactions</h2>";
             
+            echo $this->startTable( $blockchain );
             foreach ( $blockchain->getBlockchain() as $block ) {
-                
-                echo "<br />Printing next...<br />";
-                
+                echo "<tr>";
                 $this->outputBlock( $block );
+                echo "</tr>";
             }
+            echo $this->endTable();
             
             return true;
         }
@@ -113,9 +137,13 @@
                 return false;
             }
             
-            echo "<h2>Showing last transaction</h2>";
+            echo "<h2>Showing most recent transaction</h2>";
             
+            echo $this->startTable( $blockchain );
+            echo "<tr>";
             $this->outputBlock( $blockchain->getLastBlock() );
+            echo "</tr>";
+            echo $this->endTable();
             
             return true;
         }
@@ -125,22 +153,9 @@
             $blockInfo = $block->getInfo(); // When was the block added, who added the block, curHash, prevHash, ...
             $transactionInfo = $blockInfo["data"]->getData(); // Array of who, what, when, why, where, how
             
-            echo '
-                <table border="1">
-            ';
-            
             foreach ( $transactionInfo as $index => $value ) {
-                echo '
-                    <tr>
-                        <th>' . $index . '</th>
-                        <td>' . $value . '</td>
-                    </tr>
-                ';
+                echo "<td>{$value}</td>";
             }
-            
-            echo '
-                </table>
-            ';
         }
         
         public function setSns($sns) {

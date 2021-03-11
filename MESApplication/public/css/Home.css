@@ -1,0 +1,23 @@
+
+h1 {
+    text-decoration: underline;
+}
+
+label {
+    width: 20%;
+    text-align: right;
+}
+input[type="text"] {
+    width: 40%;
+}
+
+table.results {
+    border-collapse: collapse;
+    width: 90%;
+    margin: 1% 5%;
+    text-align: center;
+}
+
+.moveLeft {
+    margin-left: -30%;
+}

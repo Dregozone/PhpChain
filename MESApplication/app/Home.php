@@ -25,18 +25,21 @@
             <input type=text" id="user" style="display: none;" value="' . $user . '" />
             
             <div style="display: flex; flex-wrap: wrap;">
-                <div style="width: 48%; margin: 1%; border: 1px solid purple;">
+                <div style="width: 48%; margin: 1%;">
                     <h1>View SN</h1>
                     
                     <label for="sn">Serial number: </label>
                     <input type="text" name="" id="sn" placeholder="sn" />
+                    <br />
                     
-                    <div class="btn btn-info" onclick="searchSn()">
-                        Search
+                    <div style="text-align: center;">
+                        <div class="btn btn-info moveLeft" onclick="searchSn()">
+                            Search
+                        </div>
                     </div>
                 </div>
 
-                <div style="width: 48%; margin: 1%; border: 1px solid green;">
+                <div style="width: 48%; margin: 1%;">
                     <h1>Add Transaction</h1>
                     
                     <label for="snAdd">SN: </label>
@@ -47,18 +50,20 @@
                     <input type="text" name="" id="transactionAdd" placeholder="Transaction" />
                     <br />
                     
-                    <div class="btn btn-info" onclick="addTransaction()">
-                        Add transaction
+                    <div style="text-align: center;">
+                        <div class="btn btn-info moveLeft" onclick="addTransaction()">
+                            Add transaction
+                        </div>
                     </div>
                 </div>
                 
-                <div style="width: 48%; margin: 1%; border: 1px solid purple;">
+                <div style="width: 48%; margin: 1%;">
                     <h1>SN Results</h1>
                     
                     <div id="snResults">none</div>
                 </div>
 
-                <div style="width: 48%; margin: 1%; border: 1px solid green;">
+                <div style="width: 48%; margin: 1%;">
                     <h1>Creating new transaction</h1>
                     
                     <div id="addTransaction">none</div>
