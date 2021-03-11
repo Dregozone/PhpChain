@@ -16,7 +16,7 @@
             
             $html = '
                 <div class="loginArea">
-                    <form action="?p=Home" method="POST" autocomplete="OFF">
+                    <form action="MESApplication?p=Home" method="POST" autocomplete="OFF">
                         <fieldset>
                             <legend>Login</legend>
                         

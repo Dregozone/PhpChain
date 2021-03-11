@@ -30,17 +30,20 @@
     <head>
         <title><?= $page ?> - MES Application</title>
         
-        <link rel="stylesheet" href="public/css/shared.css" />
+        <!-- Add CSS reset/normalise here -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <link rel="stylesheet" href="MESApplication/public/css/shared.css" />
         
-        <script src="public/js/shared.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="MESApplication/public/js/shared.js"></script>
         
         <?php 
             if ( file_exists("public/css/$page.css") ) {
-                echo '<link rel="stylesheet" href="public/css/' . $page . '.css" />';
+                echo '<link rel="stylesheet" href="MESApplication/public/css/' . $page . '.css" />';
             }
             
             if ( file_exists("public/js/$page.js") ) {
-                echo '<script src="public/js/' . $page . '.js"></script>';
+                echo '<script src="MESApplication/public/js/' . $page . '.js"></script>';
             }
         ?>
     </head>
