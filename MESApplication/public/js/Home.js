@@ -13,7 +13,7 @@ function searchSn() {
 
 function addTransaction() {
     
-    let snAdd = document.getElementById("sn").value;
+    let snAdd = document.getElementById("snAdd").value;
     let user = document.getElementById("user").value;
     let action = document.getElementById("transactionAdd").value;
     
