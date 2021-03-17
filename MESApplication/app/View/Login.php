@@ -21,7 +21,7 @@
                             <legend>Login</legend>
                         
                             <label for="username">Username:</label>
-                            <input type="text" name="username" id="username" placeholder="Username" />
+                            <input type="text" name="username" id="username" placeholder="Username" value="' . getenv('USER') . '" />
                             
                             <label for="sk">Scan private key:</label>
                             <input type="password" name="sk" id="sk" placeholder="Private key" />

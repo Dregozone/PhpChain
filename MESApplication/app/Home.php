@@ -12,14 +12,29 @@
         
         echo "Logged in as: $user.";
         
-        //$output = shell_exec('ls -la');
+        //$output = shell_exec('ls -la ../');
         
-        //$output = exec('USER=central ../BlockchainDecentralisation/gossip.sh &');
+        //$output = shell_exec('USER=central ../BlockchainDecentralisation/gossip.sh');
+        //$output = shell_exec('php ../BlockchainDecentralisation/test.php central');
         
         //echo "<pre>$output</pre>";
         
-        
-        
+        echo '
+            <div id="node">
+                node here...
+                <a href="../BlockchainDecentralisation/test.php?user=' . $user . '&peer=dz" target="_blank">Open connection</a>
+            </div>
+        ';
+          
+        /*
+        echo '
+            <script>
+                console.log("\nStarting..\n");
+                $("#node").load("../BlockchainDecentralisation/test.php?user=' . $user . '&peer=dz");
+                console.log("\nFinishing..\n");
+            </script>
+        ';
+        */        
         
         echo '
             <input type=text" id="user" style="display: none;" value="' . $user . '" />

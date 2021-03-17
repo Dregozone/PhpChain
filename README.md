@@ -21,3 +21,12 @@
 ### Access the MES application
 
 http://localhost:8081/MESApplication
+
+
+
+
+
+## All in 1 shell script to run application:
+
+~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=test ./run.sh
+~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=second PEER=test ./run.sh

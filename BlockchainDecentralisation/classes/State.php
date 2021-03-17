@@ -60,9 +60,14 @@
                     // If there is a peer, check my values against theirs
                     if ( !$peerState ) {
                         // There is no peer, skip
+                        
+                        
+                        
                     } else {
                         
                         $decodedPeerState = json_decode($peerState, true);
+                        
+                        
                         
                         foreach ( $decodedPeerState as $port => $data ) {
                             if ( 
@@ -94,7 +99,7 @@
                 
                 $this->reload();
                 
-                usleep(rand(300000, 3000000));
+                usleep(rand(3000000, 30000000)); // this is 10x the original currently
             }
         }
 
