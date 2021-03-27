@@ -18,12 +18,35 @@
 
         $handler->loadFromFile(); // Pull in this users latest values
 
+            $originalSize = $handler->getBlockchainLength($sn);
+        
             $now = new \Datetime();
             $transaction = new Transaction($user, $action, $now->format("Y-m-d H:i:s"), '', 'Computer 1', '');
             $handler->addTransaction($sn, $transaction);
 
         $handler->saveToFile(); // Save back to file for gossiping
+        
+        // Wait for gossip to complete
+        usleep( 6000000 ); /* rand(3000000, 30000000) */
+        
+        $handler->loadFromFile();
+        while ( $originalSize == $handler->getBlockchainLength($sn) ) { // While the new block is not added
+            
+            // Redo until genuinely added
+            $handler->loadFromFile(); // Pull in this users latest values
 
+                $now = new \Datetime();
+                $transaction = new Transaction($user, $action, $now->format("Y-m-d H:i:s"), '', 'Computer 1', '');
+                $handler->addTransaction($sn, $transaction);
+
+            $handler->saveToFile(); // Save back to file for gossiping
+            
+            // Wait for gossip to complete
+            usleep( 6000000 ); /* rand(3000000, 30000000) */
+            
+            echo "<br />...Trying again...";
+        }
+        
         echo "<br />Successfully added transaction $action to SN: $sn.";
 
     } else {

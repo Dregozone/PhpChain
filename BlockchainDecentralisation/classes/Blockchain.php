@@ -4,7 +4,7 @@
     {
         private $data;
         private $blockchain = []; // Array of blocks becomes the blockchain
-        private $difficulty = 5; // Difficulty is number of leading 0s required for PoW
+        private $difficulty = 3; // Difficulty is number of leading 0s required for PoW
 
         public function __construct(Transaction $data) {
             $this->data = $data;

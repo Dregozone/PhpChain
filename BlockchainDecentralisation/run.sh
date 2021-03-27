@@ -1,12 +1,14 @@
 #!/bin/bash
 
-echo "Starting node for user $USER"
+echo "Joining network as $USER"
+
 if [ "$PEER" == "" ]; then
     killall php
 else
-    echo "Bootstrapping network with node $PEER"
+    echo "Gossiping with $PEER"
     peerPort=`cat data/$PEER.port`
 fi
+
 rm -rf data/$USER.json
 
 port=8000
@@ -31,9 +33,9 @@ let appPort+=$gossipPort
 let appPort+=80
 
 php -S localhost:$gossipPort & #For the gossip
-echo ""
+#echo ""
 php gossip.php $port $peerPort & 
-echo ""
+#echo ""
 php -S localhost:$appPort -t ../ & #For the application
-echo ""
+#echo ""
 firefox localhost:$appPort/MESApplication

@@ -1,8 +1,4 @@
-<?php     
-
-    echo "$page<br /><br />";
-
-    //var_dump($_POST);////
+<?php 
 
     // Handle logging in
     $user = $_POST["username"] ?? false;
@@ -10,41 +6,28 @@
     // Main 
     if ( $user !== false ) { // User exists and is logged in
         
-        echo "Logged in as: $user.";
-        
-        //$output = shell_exec('ls -la ../');
-        
-        //$output = shell_exec('USER=central ../BlockchainDecentralisation/gossip.sh');
-        //$output = shell_exec('php ../BlockchainDecentralisation/test.php central');
-        
-        //echo "<pre>$output</pre>";
-        
-        echo '
-            <div id="node">
-                node here...
-                <a href="../BlockchainDecentralisation/test.php?user=' . $user . '&peer=dz" target="_blank">Open connection</a>
+        echo "
+            <div class=\"loggedInAs\">
+                Logged in as: $user.
             </div>
-        ';
-          
-        /*
+        ";
+        
         echo '
-            <script>
-                console.log("\nStarting..\n");
-                $("#node").load("../BlockchainDecentralisation/test.php?user=' . $user . '&peer=dz");
-                console.log("\nFinishing..\n");
-            </script>
+            <h1>
+                PhpChain MES
+            </h1>
         ';
-        */        
         
         echo '
             <input type=text" id="user" style="display: none;" value="' . $user . '" />
             
             <div style="display: flex; flex-wrap: wrap;">
                 <div style="width: 48%; margin: 1%;">
-                    <h1>View SN</h1>
+                    <h2>View SN</h2>
                     
                     <label for="sn">Serial number: </label>
-                    <input type="text" name="" id="sn" placeholder="sn" />
+                    <input type="text" class="form-control homeInput" name="sn" id="sn" placeholder="SN" />
+                    
                     <br />
                     
                     <div style="text-align: center;">
@@ -55,14 +38,16 @@
                 </div>
 
                 <div style="width: 48%; margin: 1%;">
-                    <h1>Add Transaction</h1>
+                    <h2>Add Transaction</h2>
                     
                     <label for="snAdd">SN: </label>
-                    <input type="text" name="snAdd" id="snAdd" placeholder="Serial Number" />
+                    <input type="text" class="form-control homeInput" name="snAdd" id="snAdd" placeholder="Serial Number" />
+                    
                     <br />
                     
                     <label for="transactionAdd">Action: </label>
-                    <input type="text" name="" id="transactionAdd" placeholder="Transaction" />
+                    <input type="text" class="form-control homeInput" name="" id="transactionAdd" placeholder="Transaction" />
+                    
                     <br />
                     
                     <div style="text-align: center;">
@@ -73,15 +58,15 @@
                 </div>
                 
                 <div style="width: 48%; margin: 1%;">
-                    <h1>SN Results</h1>
+                    <h2>SN Results</h2>
                     
-                    <div id="snResults">none</div>
+                    <div id="snResults"></div>
                 </div>
 
                 <div style="width: 48%; margin: 1%;">
-                    <h1>Creating new transaction</h1>
+                    <h2>Creating new transaction</h2>
                     
-                    <div id="addTransaction">none</div>
+                    <div id="addTransaction"></div>
                 </div>
             </div>
         ';

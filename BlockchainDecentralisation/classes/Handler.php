@@ -90,8 +90,10 @@
         private function startTable( $blockchain ) {
             
             echo '
-                <table border="1" class="results">
-                    <tr>
+                <div style="border: 1px solid #dee2e6;">
+                    <table class="table table-striped table-hover table-sm results">
+                        <tr>
+                            <thead>
             ';
                   
             foreach ( $blockchain->getLastBlock()->getInfo()["data"]->getData() as $index => $value ) {
@@ -99,6 +101,7 @@
             }
               
             echo '
+                        </thead>
                     </tr>
             ';
         }
@@ -106,7 +109,8 @@
         private function endTable() {
             
             echo '
-                </table>
+                    </table>
+                </div>
             ';
         }
         
@@ -117,14 +121,16 @@
                 return false;
             }
             
-            echo "<h2>Showing all transactions</h2>";
+            echo "<h3>Showing all transactions</h3>";
             
             echo $this->startTable( $blockchain );
+            echo "<tbody>";
             foreach ( $blockchain->getBlockchain() as $block ) {
                 echo "<tr>";
                 $this->outputBlock( $block );
                 echo "</tr>";
             }
+            echo "</tbody>";
             echo $this->endTable();
             
             return true;
@@ -137,12 +143,22 @@
                 return false;
             }
             
-            echo "<h2>Showing most recent transaction</h2>";
+            echo "<h3>Showing most recent transaction</h3>";
             
             echo $this->startTable( $blockchain );
-            echo "<tr>";
+            
+            echo "
+                <tbody>
+                    <tr>
+            ";
+            
             $this->outputBlock( $blockchain->getLastBlock() );
-            echo "</tr>";
+            
+            echo "
+                    </tr>
+                </tbody>
+            ";
+            
             echo $this->endTable();
             
             return true;
@@ -187,6 +203,22 @@
                 }
                 
                 return false; // SN not found
+            }
+        }
+        
+        public function getBlockchainLength($sn) {
+            
+            //var_dump( $this->sns[$this->port]["session"] );
+            
+            if ( gettype( $this->sns[$this->port]["session"] ) == "string" ) {
+                
+                return 0; // This will be the first transaction
+            } else {
+                
+                $object = unserialize($this->sns[$this->port]["session"][$sn]);
+                $blockchain = $object->getBlockchain();
+                
+                return sizeof($blockchain);
             }
         }
     }

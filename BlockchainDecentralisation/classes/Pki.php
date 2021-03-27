@@ -15,6 +15,7 @@
             return [$privKey, openssl_pkey_get_details($res)['key']];
         }
 
+        /* This is signing the transaction hash */
         public static function encrypt($message, $privKey) {
             
             openssl_private_encrypt($message, $crypted, $privKey);
@@ -35,14 +36,15 @@
         }
     }
 
-    [$privKey, $pubKey] = Pki::generateKeyPair();
+    [$privKey, $pubKey] = Pki::generateKeyPair(); // Store these in files locally for use
 
-    $message = 'Hello Drupal';
 
-    $encrypted = Pki::encrypt($message, $privKey);
+    $message = 'Hello Drupal'; // This is the transaction hash that requires signing
 
-    echo $encrypted;
+    $encrypted = Pki::encrypt($message, $privKey); // Find the signature for the transacion hash
 
-    echo Pki::decrypt($encrypted, $pubKey) . "\n";
+    echo $encrypted; // This is the signature
 
-    var_dump(Pki::isValid($message, $encrypted, $pubKey));
+    echo Pki::decrypt($encrypted, $pubKey) . "\n"; // We can retreive the original hash if required
+
+    var_dump(Pki::isValid($message, $encrypted, $pubKey)); // This checks whether the signature is valid by using the public key

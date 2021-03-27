@@ -18,10 +18,4 @@
         printf("Connecting to %d\n", $peerPort);
     }
 
-    /*
-    if ( $user == "dz" ) {
-        die("Using user: dz, failed.");
-    }
-    */
-
     (new State($user, $port, $peerPort))->loop();

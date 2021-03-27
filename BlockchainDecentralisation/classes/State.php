@@ -60,14 +60,9 @@
                     // If there is a peer, check my values against theirs
                     if ( !$peerState ) {
                         // There is no peer, skip
-                        
-                        
-                        
                     } else {
                         
                         $decodedPeerState = json_decode($peerState, true);
-                        
-                        
                         
                         foreach ( $decodedPeerState as $port => $data ) {
                             if ( 
@@ -99,7 +94,7 @@
                 
                 $this->reload();
                 
-                usleep(rand(3000000, 30000000)); // this is 10x the original currently
+                usleep(rand(600000, 6000000)); // this is 2x the original currently (300000, 3000000) = orig
             }
         }
 
@@ -135,9 +130,11 @@
         public function __toString() {
 
             $data = [];
+            
             foreach ( $this->state as $port => $d ) {
-                $data[] = sprintf('%s/%s -- %d/%s', $port, $d['user'], $d['version'], substr($d['session'], 0, 40));
+                $data[] = sprintf('%s (%s) - Version: %d', $d['user'], $port, $d['version']);
             }
+            
             return implode("\n", $data);
         }
 
@@ -175,7 +172,8 @@
             
             file_put_contents($this->file, json_encode($states));
         }
-        
+    
+        /*
         public static function updateValue( $user, $port, $value ) {
             
             $file = __DIR__.'/data/'.$user.'.json';
@@ -193,26 +191,7 @@
                 
                 $state = json_decode(file_get_contents($file), true);
                 
-                $curVersion = $state[(int)$port]['version']; //Get current version
-                
-                
-                // Blockchain stuff here...
-                ////
-                /*
-                if ( $state[(int)$port]['session'] == "" ) { // This would be the first transaction
-                    // Create a new blockchain
-                    $blockchain = new \Blockchain();
-                    $blockchain->add($value);
-                    $serialisedBlockchain = serialise($blockchain);
-                } else { // Add to the existing blockchain
-                    $serialisedBlockchain = $state[(int)$port]['session'];
-                    $blockchain = unserialise($serialisedBlockchain); // This is now a Blockchain object
-                    $blockchain->add($value);
-                    $serialisedBlockchain = serialise($blockchain); // Use this in place of session value below
-                }
-                */
-                
-                
+                $curVersion = $state[(int)$port]['version']; //Get current version              
                 
                 $state[(int)$port] = ['user' => $user, 'session' => $value, 'version' => $newVersion];
             
@@ -232,4 +211,5 @@
             
             return true;
         }
+        */
     }
