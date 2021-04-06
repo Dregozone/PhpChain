@@ -4,6 +4,7 @@
     require "../classes/Block.php";
     require "../classes/Blockchain.php";
     require "../classes/Handler.php";
+    require "../classes/Logger.php";
 
     $user = $_GET["user"] ?? null;
     $sn = $_GET["sn"] ?? null;
@@ -45,6 +46,7 @@
             usleep( 6000000 ); /* rand(3000000, 30000000) */
             
             echo "<br />...Trying again...";
+            Logger::logMsg("Trying again to add transaction...", $user);
         }
         
         echo "<br />Successfully added transaction $action to SN: $sn.";

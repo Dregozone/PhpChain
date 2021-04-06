@@ -1,8 +1,7 @@
 <?php 
 
+    require_once 'classes/Logger.php';
     require_once 'classes/State.php';
-
-
 
     if ( '/gossip' == $_SERVER['PATH_INFO'] && 'POST' == $_SERVER['REQUEST_METHOD'] ) {
         

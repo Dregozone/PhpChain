@@ -1,0 +1,3 @@
+Logged in: emma
+
+2021-04-06 18:21:18 [1] - (emma) Add Transaction to SN002 'first'

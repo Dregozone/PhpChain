@@ -10,6 +10,7 @@ else
 fi
 
 rm -rf data/$USER.json
+rm -rf data/LOG$USER.txt
 
 port=8000
 retry=30
@@ -27,6 +28,7 @@ do
 done
 
 echo $port > data/$USER.port
+echo "Logged in: $USER" > data/LOG$USER.txt
 
 let gossipPort+=$port
 let appPort+=$gossipPort

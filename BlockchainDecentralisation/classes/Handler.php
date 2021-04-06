@@ -40,6 +40,10 @@
 
         public function addTransaction($sn, $action) {
             
+            //$now = new \DateTime();
+            Logger::logMsg( '(' . $this->user . ') Add Transaction to ' . $sn . ' \'' . $action->getData()["What"] . '\'', $this->user);
+            //shell_exec('echo "\n' . $now->format("Y-m-d H:i:s") . ' - (' . $this->user . ') Add Transaction to ' . $sn . ' \'' . $action->getData()["What"] . '\'" >> ../../BlockchainDecentralisation/data/LOG' . $this->user . '.txt');
+            
             // Convert legacy string values to array
             if (gettype($this->sns[$this->port]['session']) == "string") {
                 $this->sns[$this->port]['session'] = [];
@@ -208,11 +212,12 @@
         
         public function getBlockchainLength($sn) {
             
-            //var_dump( $this->sns[$this->port]["session"] );
-            
-            if ( gettype( $this->sns[$this->port]["session"] ) == "string" ) {
+            if ( 
+                gettype( $this->sns[$this->port]["session"] ) == "string" || // This is the first SN to be added
+                !array_key_exists( $sn, $this->sns[$this->port]["session"] ) // This SN hasnt been added but another one has previously
+            ) {
                 
-                return 0; // This will be the first transaction
+                return 0; // This will be the first transaction for this SN 
             } else {
                 
                 $object = unserialize($this->sns[$this->port]["session"][$sn]);

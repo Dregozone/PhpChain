@@ -1,6 +1,7 @@
 <?php 
 
-    require_once 'classes/State.php';
+    require 'classes/Logger.php';
+    require 'classes/State.php';    
 
     if ( isset($argv[3]) ) { // Manually setting user here
         putenv("USER=$argv[3]");
