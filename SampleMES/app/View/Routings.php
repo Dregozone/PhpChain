@@ -2,7 +2,7 @@
     
     namespace app\View;
 
-    Class Home extends AppView
+    Class Routings extends AppView
     {
         private $model;
         private $controller;

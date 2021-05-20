@@ -3,3 +3,78 @@
     box-sizing: border-box;
     color: darkslategrey;
 }
+
+a, a:hover {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+nav {
+    margin: auto;
+}
+
+fieldset {
+    border: 1px solid darkslategrey;
+    padding: 1%;
+}
+
+legend {
+    padding: 0;
+    margin: 0 1%;
+    width: auto;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    margin: 1% 0;
+    color: darkcyan;
+}
+
+h2 {
+    text-decoration: underline;
+}
+
+h3 {
+    margin-top: 3%;
+    font-size: 125%;
+    font-weight: 500;
+    text-align: center;
+}
+
+label {
+    width: 20%;
+    text-align: right;
+}
+input[type="text"] {
+    width: 40%;
+}
+
+table.results {    
+    width: 100%;
+    text-align: center;
+}
+
+.moveLeft {
+    margin-left: -30%;
+    margin-top: 1%;
+}
+
+div.loggedInAs {
+    position: absolute;
+    top: 0;
+    right: 1%;
+    width: 20%;
+    text-align: right;
+    font-size: 115%;
+    font-weight: 300;
+}
+
+.homeInput {
+    display: inline-block;
+}

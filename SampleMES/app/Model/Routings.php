@@ -2,11 +2,11 @@
 
     namespace app\Model;
 
-    Class Home extends AppModel 
+    Class Routings extends AppModel 
     {
         
         public function __construct() {
             //
         }
-
+        
     }
