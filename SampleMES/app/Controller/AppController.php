@@ -24,7 +24,8 @@
         // Use the API to find the operation that a SN is expected at next
         public function apiGetOpBySn($sn) {
             
-            $op = "OperationOf" . $sn;
+            //$op = "OperationOf" . $sn;
+            $op = "Op 2";
 
             return $op;
         }
