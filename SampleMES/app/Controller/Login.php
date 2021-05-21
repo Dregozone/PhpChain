@@ -12,12 +12,22 @@
         
         public function login() {
 
-            $user = $this->model->isLoggedIn();
+            // Prepare the user input for validation
+            $username = $_REQUEST["username"];
+            $sk = $_REQUEST["sk"];
 
-            // Main 
-            if ( $user !== false ) { // User exists and is logged in
-                // User is now logged in, send them to Home
-                header("location: ?p=Home");
+            // Use API to check user is legit
+            if ( $this->apiCheckCredentials( $user ) === false ) { // User failed the credential check
+                unset($_SESSION["username"]); // Ensure user is logged out
+                header("location: ?p=Login"); // Return user to login screen
+
+            } else { // User credentials are valid
+                $user = $this->model->isLoggedIn(); // Log the user in
+
+                if ( $user !== false ) { // User exists and is logged in
+                    // User is now logged in, send them to Home
+                    header("location: ?p=Home");
+                }
             }
         }
 

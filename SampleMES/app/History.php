@@ -2,7 +2,8 @@
 
     // These actions are allowed from this page... 
     $validActions = [
-        ""
+        "viewSn",
+        "undoTransaction"
     ];
     
     // Handle logging in
@@ -21,6 +22,9 @@
 
             // Do controller action
             $controller->$action();
+        } else {
+            // Show user a form to search for a SN to view the transaction and defect details
+            $model->addWarning("No SN selected, please enter a SN to view its history.");
         }
         
         echo $view->loggedInAs($user);
@@ -35,10 +39,18 @@
                 echo $view->button("Routings", "Routings");
             echo $view->endNav();
 
-            echo "Viewing History page as {$model->getUser()}";
-
             echo $view->errors();
             echo $view->warnings();
+
+            if ( sizeof( $model->getErrors() ) > 0 ) { die(); } // If there are errors, display them but dont display the remaining view
+
+            if ( sizeof( $model->getWarnings() ) > 0 ) {  // If there are warnings, display them and a list of valid routings to choose from 
+                echo $view->snHistorySearchForm();
+                die();
+            }
+
+            echo $view->notices();
+            echo $view->showHistoryScreen();
 
         echo $view->endContainer();
         
