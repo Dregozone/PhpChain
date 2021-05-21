@@ -2,7 +2,7 @@
 
     // These actions are allowed from this page... 
     $validActions = [
-        "viewNextOperation"
+        "viewOperation"
     ];
 
     // Handle logging in

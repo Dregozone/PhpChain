@@ -10,4 +10,14 @@
             $this->model = $model;
         }
         
+        public function login() {
+
+            $user = $this->model->isLoggedIn();
+
+            // Main 
+            if ( $user !== false ) { // User exists and is logged in
+                // User is now logged in, send them to Home
+                header("location: ?p=Home");
+            }
+        }
     }

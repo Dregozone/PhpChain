@@ -61,6 +61,16 @@
             return '</nav>';
         }
 
+        public function startMain() {
+
+            return '<main>';
+        }
+
+        public function endMain() {
+
+            return '</main>';
+        }
+
         public function button($text, $link) {
 
             $html = '

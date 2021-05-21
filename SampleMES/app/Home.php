@@ -1,5 +1,10 @@
 <?php 
 
+    $validActions = [
+        "loadNextOpBySn",
+        "loadJobInitialisation"
+    ];
+
     // Handle logging in
     $user = $model->isLoggedIn();
 
@@ -10,6 +15,7 @@
             // Prep action
             $action = $model->cleanse($_GET["action"]);
 
+            // Prep variables
             foreach( $_GET as $index => $value ) {
                 $model->setVar($index, $value);
             }
@@ -30,34 +36,10 @@
                 echo $view->button("Routings", "Routings");
             echo $view->endNav();
 
-            echo "Viewing Home page as {$model->getUser()}";
-
-            echo '
-                <div class="snForm">
-                    <form action="#" method="GET" autocomplete="off">
-                        <fieldset>
-                            <legend>Load next op by SN:</legend>
-
-                            <input type="hidden" name="p" value="Work" aria-label="Page selector" />
-                            <input type="hidden" name="action" value="viewNextOperation" aria-label="Action selector" />
-
-                            <div class="flex">
-                                <div class="snFormLabel">
-                                    <label for="sn">Serial number: </label>
-                                </div>
-
-                                <div class="snFormInput">
-                                    <input type="text" class="form-control" name="sn" id="sn" placeholder="Serial number" value="" />
-                                </div>
-                                
-                                <div class="snFormSubmit">
-                                    <input type="submit" class="btn btn-primary" value="Go" aria-label="Form submit button" />
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-            ';
+            echo $view->startMain();
+                echo $view->loadOperationForm();
+                echo $view->loadInitialisationForm();
+            echo $view->endMain();
 
         echo $view->endContainer();
 

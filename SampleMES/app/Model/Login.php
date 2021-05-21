@@ -2,7 +2,7 @@
 
     namespace app\Model;
 
-    Class Login 
+    Class Login extends AppModel 
     {
         
         public function __construct() {

@@ -16,10 +16,12 @@
             
             $html = '
                 <div class="loginArea">
-                    <form action="SampleMES?p=Home" method="POST" autocomplete="OFF">
+                    <form action="SampleMES?p=Login" method="POST" autocomplete="OFF">
                         <fieldset>
                             <legend>Login</legend>
-                        
+                            
+                            <input type="hidden" name="action" value="login" aria-label="Action selector" />
+
                             <label for="username">Username:</label>
                             <input type="text" name="username" id="username" placeholder="Username" value="' . getenv('USER') . '" />
                             

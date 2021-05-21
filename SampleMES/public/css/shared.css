@@ -15,7 +15,8 @@ nav {
 
 fieldset {
     border: 1px solid darkslategrey;
-    padding: 1%;
+    padding: 1.3%;
+    background: rgba(206, 223, 245, 0.2);
 }
 
 legend {

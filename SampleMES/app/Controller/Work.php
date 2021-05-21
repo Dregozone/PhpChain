@@ -10,7 +10,7 @@
             $this->model = $model;
         }
 
-        public function viewNextOperation() {
+        public function viewOperation() {
 
             var_dump( $this->model->getVars() );
             
