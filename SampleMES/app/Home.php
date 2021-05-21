@@ -41,6 +41,9 @@
                 echo $view->loadInitialisationForm();
             echo $view->endMain();
 
+            echo $view->errors();
+            echo $view->warnings();
+            
         echo $view->endContainer();
 
     } else {

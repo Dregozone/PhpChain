@@ -2,7 +2,10 @@
 
     // These actions are allowed from this page... 
     $validActions = [
-        "viewOperation"
+        "viewOperation", 
+        "addTransaction",
+        "addDefect",
+        "updateDefect"
     ];
 
     // Handle logging in
@@ -21,6 +24,9 @@
 
             // Do controller action
             $controller->$action();
+        } else {
+            // No action has been specified, the user instead manually navigated to Work page
+            $model->addError("<b>No Job or Operation selected!</b><br />Please use <a href=\"?p=Home\"><u>Home screen</u></a> to navigate to the operation details screen.");
         }
 
         echo $view->loggedInAs($user);
@@ -35,7 +41,12 @@
                 echo $view->button("Routings", "Routings");
             echo $view->endNav();
 
-            echo "Viewing Work page as {$model->getUser()}";
+            echo $view->errors();
+            echo $view->warnings();
+            if ( sizeof( $model->getErrors() ) > 0 ) { die(); } // If there are errors, display them but dont display the remaining view
+
+            echo $view->notices();
+            echo $view->showWorkScreen();
 
         echo $view->endContainer();
         

@@ -5,6 +5,9 @@
     Class AppModel 
     {
         private $vars = [];
+        private $errors = [];
+        private $warnings = [];
+        private $notices = [];
 
         /** If user is logged in, return the cleansed username, else return false and the page will not be displayed
          * 
@@ -31,10 +34,22 @@
             return htmlspecialchars(trim($dirty));
         }
 
+        public function addNotice($msg) {
+            $this->notices[] = $msg;
+        }
+
+        public function addError($msg) {
+            $this->errors[] = $msg;
+        }
+
+        public function addWarning($msg) {
+            $this->warnings[] = $msg;
+        }
+
         public function setVar($index, $value) {
 
-            // All SNs will only use uppercase to avoid problems later on
-            if ( $index == "sn" ) {
+            // All SNs and Jobs will only use uppercase to avoid problems later on
+            if ( $index == "sn" || $index == "job" ) {
                 $value = strtoupper($value);
             }
 
@@ -54,5 +69,20 @@
         public function getUser() {
 
             return $_SESSION["username"];
+        }
+
+        public function getNotices() {
+
+            return $this->notices;
+        }
+
+        public function getErrors() {
+
+            return $this->errors;
+        }
+
+        public function getWarnings() {
+
+            return $this->warnings;
         }
     }

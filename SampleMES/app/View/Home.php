@@ -4,7 +4,7 @@
 
     Class Home extends AppView
     {
-        private $model;
+        protected $model;
         private $controller;
         
         public function __construct($model, $controller) {
@@ -18,7 +18,7 @@
                 <div class="snForm">
                     <form action="#" method="GET" autocomplete="off">
                         <fieldset>
-                            <legend>Load next op by SN:</legend>
+                            <legend>View SNs next operation:</legend>
 
                             <input type="hidden" name="p" value="Home" aria-label="Page selector" />
                             <input type="hidden" name="action" value="loadNextOpBySn" aria-label="Action selector" />

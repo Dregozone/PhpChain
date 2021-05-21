@@ -2,9 +2,9 @@
     
     namespace app\View;
 
-    Class Login 
+    Class Login extends AppView
     {
-        private $model;
+        protected $model;
         private $controller;
         
         public function __construct($model, $controller) {
@@ -23,12 +23,12 @@
                             <input type="hidden" name="action" value="login" aria-label="Action selector" />
 
                             <label for="username">Username:</label>
-                            <input type="text" name="username" id="username" placeholder="Username" value="' . getenv('USER') . '" />
+                            <input class="form-control" type="text" name="username" id="username" placeholder="Username" value="' . getenv('USER') . '" />
                             
                             <label for="sk">Scan private key:</label>
-                            <input type="password" name="sk" id="sk" placeholder="Private key" />
+                            <input class="form-control" type="password" name="sk" id="sk" placeholder="Private key" />
                         
-                            <input type="submit" value="Login" aria-label="Login button" />
+                            <input class="btn btn-primary" type="submit" value="Login" aria-label="Login button" />
                         </fieldset>
                     </form>
                 </div>

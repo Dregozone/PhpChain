@@ -1,5 +1,10 @@
 <?php 
 
+    // These actions are allowed from this page... 
+    $validActions = [
+        ""
+    ];
+
     // Handle logging in
     $user = $model->isLoggedIn();
 
@@ -31,6 +36,9 @@
             echo $view->endNav();
 
             echo "Viewing Routings page as {$model->getUser()}";
+
+            echo $view->errors();
+            echo $view->warnings();
 
         echo $view->endContainer();
         

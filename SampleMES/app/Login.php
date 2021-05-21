@@ -1,21 +1,16 @@
 <?php 
 
     $validActions = [
-        "login"
+        "login",
+        "logout"
     ];
 
-    // If user is logging out, log them out
-    if ( isset($_GET["logout"]) && $_GET["logout"] == 1 ) {
-        
-        unset($_SESSION["username"]);
-        header("location: ?p=Login");
-    }
-
-    // Check if user is logging in
+    // Check user actions for logging in/out 
     if ( isset($_REQUEST["action"]) && in_array($_REQUEST["action"], $validActions) ) {
         // Prep action
         $action = $model->cleanse($_REQUEST["action"]);
 
+        // Prep variables 
         foreach( $_REQUEST as $index => $value ) {
             $model->setVar($index, $value);
         }
@@ -25,3 +20,6 @@
     }
 
     echo $view->loginArea();
+
+    echo $view->errors();
+    echo $view->warnings();

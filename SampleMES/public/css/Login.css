@@ -1,6 +1,6 @@
 .loginArea {
     margin: 2% 20%;
-    width: 60$;
+    width: 60%;
 }
 
 fieldset {
@@ -10,6 +10,7 @@ fieldset {
 
 legend {
     font-size: 140%;
+    background-image: linear-gradient(white, rgba(206, 223, 245, 0.1));
 }
 
 label, input {
@@ -24,6 +25,7 @@ label {
 
 input[type="text"], input[type="password"] {
     width: 45%;
+    display: inline-block;
 }
 
 input[type="submit"] {

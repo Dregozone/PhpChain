@@ -20,4 +20,12 @@
                 header("location: ?p=Home");
             }
         }
+
+        public function logout() {
+
+            // stop BC processes here?? ////
+
+            unset($_SESSION["username"]);
+            header("location: ?p=Login");
+        }
     }

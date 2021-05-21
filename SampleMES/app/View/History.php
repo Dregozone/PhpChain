@@ -4,7 +4,7 @@
 
     Class History extends AppView
     {
-        private $model;
+        protected $model;
         private $controller;
         
         public function __construct($model, $controller) {
