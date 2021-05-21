@@ -2,7 +2,7 @@
     
     namespace app\Controller;
 
-    Class Home 
+    Class Home extends AppController
     {
         private $model;
         
@@ -14,13 +14,9 @@
             
             $sn = $this->model->getVar("sn");
 
-            // Find job and op by SN using API
-            ////
-
-            //// debug until API
-                $job = "JobOf" . $sn;
-                $operation = "OpOf" . $sn;
-            ////
+            // Find job and op by SN using API in AppController
+            $job = $this->apiGetJobBySn($sn);
+            $operation = $this->apiGetOpBySn($sn);
 
             // Send to work page of this SNs next required op
             header("location: ?p=Work&job=" . $job . "&operation=" . $operation . "&action=viewOperation");

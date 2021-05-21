@@ -2,7 +2,7 @@
     
     namespace app\Controller;
 
-    Class Login 
+    Class Login extends AppController
     {
         private $model;
         

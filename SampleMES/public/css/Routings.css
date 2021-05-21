@@ -1,0 +1,14 @@
+.routingContainer {
+    margin: 1% 10%;
+    width: 80%;
+}
+
+.routings {
+    margin: 1% 20%;
+    width: 60%;
+}
+    .routing {
+        border: 1px solid darkslategrey;
+        padding: 1%;
+        text-align: center;
+    }

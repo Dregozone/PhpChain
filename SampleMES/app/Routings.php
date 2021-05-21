@@ -2,7 +2,10 @@
 
     // These actions are allowed from this page... 
     $validActions = [
-        ""
+        "viewRouting",
+        "editRouting",
+        "addOperation",
+        "removeOperation"
     ];
 
     // Handle logging in
@@ -21,6 +24,10 @@
 
             // Do controller action
             $controller->$action();
+        } else {
+            // No action has been picked, show list of available routings to view and edit
+            $model->addWarning("No routing selected, please choose a routing to view/edit.");
+            $controller->findRoutings();
         }
         
         echo $view->loggedInAs($user);
@@ -35,10 +42,17 @@
                 echo $view->button("Routings", "Routings");
             echo $view->endNav();
 
-            echo "Viewing Routings page as {$model->getUser()}";
-
             echo $view->errors();
             echo $view->warnings();
+            if ( sizeof( $model->getErrors() ) > 0 ) { die(); } // If there are errors, display them but dont display the remaining view
+
+            if ( sizeof( $model->getWarnings() ) > 0 ) {  // If there are warnings, display them and a list of valid routings to choose from 
+                echo $view->showAllRoutings();
+                die();
+            }
+
+            echo $view->notices();
+            echo $view->showRoutingScreen();
 
         echo $view->endContainer();
         

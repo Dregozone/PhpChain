@@ -19,6 +19,7 @@
         $modelString = "app\\Model\\$page";
         $model = new $modelString();
         
+        require_once("app/Controller/AppController.php");
         require_once("app/Controller/$page.php");
         $controllerString = "app\\Controller\\$page";
         $controller = new $controllerString($model);

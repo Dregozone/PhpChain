@@ -2,7 +2,7 @@
     
     namespace app\Controller;
 
-    Class History 
+    Class History extends AppController
     {
         private $model;
         
