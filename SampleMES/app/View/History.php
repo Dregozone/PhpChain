@@ -112,7 +112,7 @@
                         <td>
                 ';
 
-                if ( $transaction["operation"] != "Initialisation" ) {
+                if ( $transaction["operation"] != "Initialisation" && substr($transaction["operation"], 0, 5) != "UNDO-" ) {
 
                     $html .= '
                             <a href="?p=History&action=undoTransaction&sn=' . $sn . '&transaction=' . $transaction["operation"] . '">
