@@ -61,7 +61,8 @@
             // Build list of completed operations
             $completedOps = [];
             foreach ( $this->model->getSnTransactions() as $transaction ) {
-                $completedOps[] = $transaction["what"];
+
+                $completedOps[] = $transaction["operation"];
             }
 
             $html .= '
@@ -105,16 +106,16 @@
                 
                 $html .= '
                     <tr>
-                        <td>' . $transaction["what"] . '</td>
-                        <td>' . $transaction["who"] . '</td>
-                        <td>' . $transaction["when"] . '</td>
+                        <td>' . $transaction["operation"] . ' (' . $transaction["job"] . ')</td>
+                        <td>' . $transaction["user"] . '</td>
+                        <td>' . $transaction["datetime"] . '</td>
                         <td>
                 ';
 
-                if ( $transaction["what"] != "Initialisation" ) {
+                if ( $transaction["operation"] != "Initialisation" ) {
 
                     $html .= '
-                            <a href="?p=History&action=undoTransaction&sn=' . $sn . '&transaction=' . $transaction["what"] . '">
+                            <a href="?p=History&action=undoTransaction&sn=' . $sn . '&transaction=' . $transaction["operation"] . '">
                                 <div class="btn btn-danger">
                                     Undo
                                 </div>

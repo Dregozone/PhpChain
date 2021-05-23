@@ -66,6 +66,7 @@
         // Use API to get list of transactions
         public function apiGetTransactions() {
 
+            /*
             // This will use blockchains
             $transactions = [
                 "SN001" => [ 
@@ -76,17 +77,27 @@
                     ["who" => "anders", "what" => "Op 1", "when" => "2021-01-01 13:25:00"]
                 ]
             ];
+            */
 
-            return $transactions;
+            // Prepare values for API
+            $action = "getTransactions";
+            $user = $this->model->getUser();
+
+            // Run API
+            $transactionsFromApi = include '../Communication/API.php';
+
+            return $transactionsFromApi;
         }
 
         // Use API to add transaction against SN
         public function apiAddTransaction($sn, $job, $operation, $user) {
 
+            // Prepare values for API
+            $action = "addTransaction";
             $now = (new \DateTime())->format("Y-m-d H:i:s");
 
-            //
-
+            // Run API
+            $fromApi = include '../Communication/API.php';
         }
 
         // Use API to add defect against SN

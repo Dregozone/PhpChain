@@ -130,7 +130,7 @@
 
                     $html .= '
                         <div class="defectSnGroup">
-                            <h4>' . $sn . '</h4>
+                            <h4>' . str_replace("Defects", "", $sn) . '</h4>
 
                             <div class="flex defect defectHeader">
                                 <div style="width: 20%;">Defect UD</div>
@@ -187,10 +187,10 @@
             $html .= '
                         </div>
 
-                        <div style="width: 20%;">
+                        <div style="width: 20%; border-left: 1px dotted darkslategrey;">
                             <h3>Routing overview:</h3>
 
-                            <div class="operations">
+                            <div class="operations" style="margin-left: 5%;">
             ';
             
             $opFound = false;

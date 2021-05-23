@@ -28,7 +28,6 @@
         require_once("app/View/$page.php");
         $viewString = "app\\View\\$page";
         $view = new $viewString($model, $controller);
-        
     }
 ?>
 
