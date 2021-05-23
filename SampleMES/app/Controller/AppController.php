@@ -51,13 +51,6 @@
             $transactionsFromApi = include '../Communication/API.php';
             $snTransactions = $transactionsFromApi[$sn];
 
-            /*
-            echo "<pre>";
-            var_dump( $snTransactions );
-            echo "</pre>";
-            //die();
-            */
-
             // Build array of operation names that have been completed  
             $snTransactionOperations = [];
             foreach ( $snTransactions as $details ) {
@@ -67,13 +60,6 @@
             // Loop through all operations in this routing to find the first without a valid transaction recorded
             foreach ( $routing as $operation => $details ) {
 
-                /*
-                var_dump( $operation );
-                echo "<hr />";
-                var_dump( array_reverse($snTransactionOperations, true) );
-                echo "<hr />";
-                */
-
                 if (
                     !in_array($operation, $snTransactionOperations) || /* This has never been done */
                     ( 
@@ -82,17 +68,6 @@
                     )
                 ) {
                     // This is the first incomplete operation, return this value... 
-
-                    /*
-                    echo "Searching for \"UNDO-{$operation}\" in array: ";
-                    var_dump( array_reverse($snTransactionOperations, true) );
-                    */
-
-                    //echo array_search("UNDO-" . $operation, array_reverse($snTransactionOperations, true)) . " > " . array_search($operation, array_reverse($snTransactionOperations, true));
-                    //var_dump( array_search("UNDO-" . $operation, array_reverse($snTransactionOperations, true)) > array_search($operation, array_reverse($snTransactionOperations, true)) );
-
-                    //var_dump( $operation );
-                    //die();
 
                     return $operation;
                 }
@@ -117,18 +92,14 @@
         // Use API to get list of defects
         public function apiGetDefects() {
 
-            // This will use blockchains
-            $defects = [
-                "DefectsSN001" => [
-                    [ "defectID" => 1, "defectName" => "Missing part", "status" => "Defective", "version" => 1 ],
-                    [ "defectID" => 3, "defectName" => "Incorrect part", "status" => "Defective", "version" => 1 ]
-                ],
-                "DefectsSN002" => [
-                    [ "defectID" => 2, "defectName" => "Damaged part", "status" => "Defective", "version" => 1 ]
-                ]
-            ];
+            // Prepare values for API
+            $action = "getDefects";
+            $user = $this->model->getUser();
 
-            return $defects;
+            // Run API
+            $defectsFromApi = include '../Communication/API.php';
+
+            return $defectsFromApi;
         }
 
         // Use API to get list of transactions
@@ -158,23 +129,33 @@
         // Use API to add defect against SN
         public function apiAddDefect($sn, $defectName, $user) {
 
+            // Prepare values for API
+            $action = "addDefect";
             $now = (new \DateTime())->format("Y-m-d H:i:s");
 
-            //
-
+            // Run API
+            $fromApi = include '../Communication/API.php';
         }
 
         // Use API to update defect status
         public function apiUpdateDefect( $sn, $defectId, $status, $user) {
             
+            // Prepare values for API
+            $action = "updateDefect";
             $now = (new \DateTime())->format("Y-m-d H:i:s");
 
-            //
-
+            // Run API
+            $fromApi = include '../Communication/API.php';
         }
 
-        // Use API to update all routings
-        public function apiUpdateRoutings( $updatedRoutings, $user ) {
-            //
+        // Use API to update routing
+        public function apiUpdateRouting( $updatedRouting, $user ) {
+
+            // Prepare values for API
+            $action = "updateRouting";
+            $now = (new \DateTime())->format("Y-m-d H:i:s");
+
+            // Run API
+            $fromApi = include '../Communication/API.php';
         }
     }

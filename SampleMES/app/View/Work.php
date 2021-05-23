@@ -133,7 +133,7 @@
                             <h4>' . str_replace("Defects", "", $sn) . '</h4>
 
                             <div class="flex defect defectHeader">
-                                <div style="width: 20%;">Defect UD</div>
+                                <div style="width: 20%;">Defect ID</div>
                                 <div style="width: 30%;">Defect Name</div>
                                 <div style="width: 20%;">Current Status</div>
 
@@ -143,7 +143,17 @@
                             </div>
                     ';
 
-                    foreach ( $defectSnGroup as $defect ) {
+                    $defectsNewestFirst = array_reverse($defectSnGroup, true);
+                    $defectSnGroupToUse = [];
+                    foreach ( $defectsNewestFirst as $defectRow ) {
+
+                        if ( !array_key_exists($defectRow["defectID"], $defectSnGroupToUse) ) {
+                            // This defect ID hasnt been seen yet, this is the latest value to use. Therefore, add to "toUse" array 
+                            $defectSnGroupToUse[$defectRow["defectID"]] = $defectRow;
+                        } // Else, this is an older version of the already recorded value, dont show on this screen 
+                    }
+
+                    foreach ( $defectSnGroupToUse as $defect ) {
                         $html .= '
                             <div class="flex defect">
                                 <div style="width: 20%;">' . $defect["defectID"] . '</div>

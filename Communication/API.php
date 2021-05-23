@@ -6,7 +6,9 @@
         "updateDefect",
         "getTransactions",
         "getJobBySn",
-        "getRoutings"
+        "getRoutings",
+        "getDefects",
+        "updateRouting"
     ];
 
     // Remove bad requests
@@ -129,16 +131,108 @@
     }
 
     if (!function_exists('addDefect')) {
-        // Prepare functions that interact with the data
-        function addDefect($sn, $defectName, $user) {
+        // Prepare command functions that interact with the data
+        function addDefect($sn, $defectName, $user, $now) {
+
+            $file = "../Communication/data/{$user}.json";
+            $port = findPortByUser($user);
+
+            $data = loadFromFile($file, $user);
+
+            // Perform some actions on the data
+            if ( array_key_exists("Defect" . $sn, $data[$port]["data"]) ) {
+                // SN has been initialised and found defects already recorded
+                
+                // Get the existing blockchain ////
+                $blockchain = $data[$port]["data"]["Defect" . $sn];
+
+                // Add block to blockchain ////
+                $blockchain[] = [ "defectID" => sizeof( $data[$port]["data"]["Defect" . $sn] ), "defectName" => $defectName, "status" => "Defective", "user" => $user, "datetime" => $now, "version" => 1 ];////replace with serialised blockchain object here
+
+            } else {
+                // SN has not yet had defects recorded
+
+                // Create new blockchain AND add the genesis block to it ////
+                $blockchain = [["defectID" => 0, "defectName" => $defectName, "status" => "Defective", "user" => $user, "datetime" => $now, "version" => 1]];////replace with serialised blockchain object here
+            }
+
+            // Update the SN to the latest blockchain object
+            $data[$port]["data"]["Defect" . $sn] = $blockchain;
+
+            // Increment the version number of this port's data to indicate a change has occurred
+            $data[$port]["version"]++;
+
+            saveToFile($file, $data);
 
             return true; // return true/false/the value being requested
         }
     }
 
     if (!function_exists('updateDefect')) {
-        function updateDefect( $sn, $defectId, $status, $user) {
+        function updateDefect( $sn, $defectId, $status, $user, $now) {
             
+            $file = "../Communication/data/{$user}.json";
+            $port = findPortByUser($user);
+
+            $data = loadFromFile($file, $user);
+
+            // Perform some actions on the data
+            if ( array_key_exists("Defect" . $sn, $data[$port]["data"]) ) {
+                // This is a good situation, defect exists and therefore can be modified... 
+
+                $blockchain = $data[$port]["data"]["Defect" . $sn];
+
+                foreach ( $blockchain as $block ) {
+                    
+                    if ( $defectId == $block["defectID"] ) {
+                        // This is the defect being updated, store its current values
+                        $copyOfOriginal = $block;
+                    }
+                }
+
+                $defectName = $copyOfOriginal["defectName"];
+                $newVersion = $copyOfOriginal["version"] + 1;
+
+                // Add block to blockchain ////
+                $blockchain[] = [ "defectID" => $defectId, "defectName" => $defectName, "status" => $status, "user" => $user, "datetime" => $now, "version" => $newVersion ];////replace with serialised blockchain object here
+
+            } else {
+                // SN has not yet had defects recorded
+                die("Something went wrong! You are attempting to update the status of a defect that doesnt exist. Please press \"back\" in your browser to continue.");
+            }
+
+            // Update the SN to the latest blockchain object
+            $data[$port]["data"]["Defect" . $sn] = $blockchain;
+
+            // Increment the version number of this port's data to indicate a change has occurred
+            $data[$port]["version"]++;
+
+            saveToFile($file, $data);
+
+            return true; // return true/false/the value being requested
+
+
+
+
+
+
+
+
+
+
+            echo "updating defect...";
+            die();
+
+            return true;
+        }
+    }
+
+    if (!function_exists('updateRouting')) {
+        function updateRouting( $updatedRouting, $user, $now) {
+            
+            echo "updating routing...";
+            die();
+
             return true;
         }
     }
@@ -174,6 +268,33 @@
         }
     }
 
+    if (!function_exists('getDefects')) {
+        // Prepare command functions that interact with the data
+        function getDefects($user) {
+
+            $file = "../Communication/data/{$user}.json";
+            $port = findPortByUser($user);
+
+            $data = loadFromFile($file, $user);
+
+            // Filter to only SN defects
+            $snDefects = [];
+            foreach ( $data[findPortByUser($user)]["data"] as $index => $record ) {
+                
+                if ( strtoupper(substr($index, 0, 6)) == "DEFECT" ) {
+                    // This is a Defect record, add to array to be returned
+                    $snDefects[str_replace("Defect", "", $index)] = $record;
+                } else if ( strtoupper(substr($index, 0, 7)) == "ROUTING" ) {
+                    // This is a routing record, skip
+                } else {
+                    // This is a SN record, skip
+                }
+            }
+
+            return $snDefects; // return true/false/the value being requested
+        }
+    }
+
     if (!function_exists('getJobBySn')) {
         // Prepare command functions that interact with the data
         function getJobBySn($user, $sn) {
@@ -205,7 +326,7 @@
 
             $data = loadFromFile($file, $user);
 
-            // Filter to only SN transactions
+            // Filter to only routings
             $routings = [];
             foreach ( $data[findPortByUser($user)]["data"] as $index => $record ) {
                 
@@ -260,7 +381,7 @@
             }
 
             // Run the command
-            if ( addDefect($sn, $defectName, $user) ) {
+            if ( addDefect($sn, $defectName, $user, $now) ) {
                 
                 return true;
             }
@@ -274,14 +395,34 @@
                 !isset($sn) || 
                 !isset($defectId) ||
                 !isset($status) ||
-                !isset($user)
+                !isset($user) || 
+                !isset($now)
             ) {
 
                 return false;
             }
 
             // Run the command
-            if ( updateDefect($sn, $defectId, $status, $user) ) {
+            if ( updateDefect($sn, $defectId, $status, $user, $now) ) {
+                
+                return true;
+            }
+
+            break;
+
+        case "updateRouting": 
+
+            // Check for required variables
+            if ( 
+                !isset($updatedRouting) || 
+                !isset($now)
+            ) {
+
+                return false;
+            }
+
+            // Run the command
+            if ( updateRouting($updatedRouting, $user, $now) ) {
                 
                 return true;
             }
@@ -303,6 +444,25 @@
             if ( $transactions !== false ) {
                 
                 return $transactions;
+            }
+
+            break;
+
+        case "getDefects": 
+    
+            // Check for required variables
+            if ( 
+                !isset($user)
+            ) {
+
+                return false;
+            }
+
+            // Run the command
+            $defects = getDefects($user);
+            if ( $defects !== false ) {
+                
+                return $defects;
             }
 
             break;

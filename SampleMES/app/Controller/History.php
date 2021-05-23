@@ -15,12 +15,26 @@
             $sn = $this->model->getVar("sn");
             $transactions = $this->apiGetTransactions();
             $defects = $this->apiGetDefects();
-            $job = $this->apiGetJobBySn($sn);
+            $job = $this->apiGetJobBySn($sn) !== false ? $this->apiGetJobBySn($sn) : '';
             $routings = $this->apiGetRoutings();
 
-            $this->model->setSnTransactions( $transactions[$sn] );
-            $this->model->setSnDefects( $defects["Defects" . $sn] );
-            $this->model->setRouting( $routings[$job] );
+            if ( array_key_exists($sn, $transactions) ) {
+                $this->model->setSnTransactions( $transactions[$sn] );
+            } else {
+                $this->model->setSnTransactions( [] );
+            }
+
+            if ( array_key_exists($sn, $defects) ) {
+                $this->model->setSnDefects( $defects[$sn] );
+            } else {
+                $this->model->setSnDefects( [] );
+            }
+
+            if ( array_key_exists($job, $routings) ) {
+                $this->model->setRouting( $routings[$job] );
+            } else {
+                $this->model->setRouting( [] );
+            }
 
             if ( isset($_GET["sn"]) && isset($_GET["msg"]) ) { // An action has just been processed against this SN
 

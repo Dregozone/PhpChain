@@ -30,3 +30,14 @@ http://localhost:8081/MESApplication
 
 ~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=test ./run.sh
 ~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=second PEER=test ./run.sh
+
+
+
+---
+
+From {projectDir}/Communication, run:
+(testing)
+php -S localhost:8081 -t ../ --Simulating application run without starting the gossip network
+
+(full)
+USER={user} (PEER={peer}) ./run.sh --Where () is optional
