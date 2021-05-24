@@ -80,10 +80,11 @@
             $operationToRemove = $this->model->getVar("operation");
 
             // Identify and remove the requested operation
-            unset( $routings[$routingName][$operationToRemove] );
+            $mostRecentVersion = sizeof($routings[$routingName]) - 1;
+            unset( $routings[$routingName][$mostRecentVersion][$operationToRemove] );
 
             // Persist the change using the API (include version)
-            $this->apiUpdateRouting($routings[$routingName], $this->model->getUser());
+            $this->apiUpdateRouting($routings[$routingName], $routingName, $this->model->getUser());
 
             // Then redirect to clean URL for viewing the routing and able to choose a different action next
             $routing = $this->model->getVar("routing");

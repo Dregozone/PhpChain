@@ -41,7 +41,8 @@
             $user = $this->model->getUser();
             // Run API
             $routingsFromApi = include '../Communication/API.php';
-            $routing = $routingsFromApi[$jobFromApi];
+            $mostRecentRouting = sizeof( $routingsFromApi[$jobFromApi] ) - 1;
+            $routing = $routingsFromApi[$jobFromApi][$mostRecentRouting];
 
             // FIND SN COMPLETED TRANSACTIONS
             // Prepare values for API
@@ -149,7 +150,7 @@
         }
 
         // Use API to update routing
-        public function apiUpdateRouting( $updatedRouting, $user ) {
+        public function apiUpdateRouting( $updatedRouting, $routingName, $user ) {
 
             // Prepare values for API
             $action = "updateRouting";

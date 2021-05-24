@@ -69,17 +69,23 @@
                 <div style="text-align: center;">
             ';
 
-            foreach ( $this->model->getRouting() as $name => $details ) {
-            
-                $isComplete = in_array($name, $completedOps);
-                $bg = $isComplete ? 'lightgreen' : 'lightgrey';
+            $routing = $this->model->getRouting();
+            $mostRecentVersion = sizeof( $routing ) - 1;
 
-                $html .= '
-                    <div class="flex operation" style="background: ' . $bg . ';">
-                        <div style="width: 35%;">Sequence: ' . $details["sequence"] . '</div>
-                        <div style="width: 65%;">Name: ' . $name . '</div>
-                    </div>
-                ';
+            if ( array_key_exists($mostRecentVersion, $routing) ) {
+                
+                foreach ( $routing[$mostRecentVersion] as $name => $details ) {                
+
+                    $isComplete = in_array($name, $completedOps);
+                    $bg = $isComplete ? 'lightgreen' : 'lightgrey';
+    
+                    $html .= '
+                        <div class="flex operation" style="background: ' . $bg . ';">
+                            <div style="width: 35%;">Sequence: ' . $details["sequence"] . '</div>
+                            <div style="width: 65%;">Name: ' . $name . '</div>
+                        </div>
+                    ';
+                }
             }
 
             $html .= '

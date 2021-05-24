@@ -1,5 +1,6 @@
 <?php 
 
+    // Specify valid requests for this API, all others will return value false with no actions taken
     $validActions = [
         "addTransaction",
         "addDefect",
@@ -37,6 +38,17 @@
         }
     }
 
+    if (!function_exists('findPublicKeyByUser')) {
+        /** Will look up public key value from file stored locally, this is used to log in and sign transactions but also gossip'd to ... 
+         *  ... allow other users on the network to validate your transactions against your public key
+         * 
+         */
+        function findPublicKeyByUser($user) {
+
+            return '';////
+        }
+    }
+
     if (!function_exists('loadFromFile')) {
         /** Load data from this user's file
          * 
@@ -58,14 +70,56 @@
                         "user" => $user,
                         "data" => [
                             "ROUTING001" => [
-                                "Initialisation" => [ "sequence" => 0, "name" => "Initialisation", "details" => "Scan here to initialise a new SN into this routing." ],
-                                "Op 1" => [ "sequence" => 1, "name" => "Op 1", "details" => "Op 1 info." ],
-                                "Op 2" => [ "sequence" => 2, "name" => "Op 2", "details" => "Op 2 info." ],
-                                "Op 3" => [ "sequence" => 3, "name" => "Op 3", "details" => "Op 3 info." ],
+                                0 => [ /* 0 = Initial version... new versions of this routing will increment and be stored below */
+                                    "Initialisation" => [ "sequence" => 0, "name" => "Initialisation", "details" => "Scan here to initialise a new SN into this routing." ],
+                                    "Op 1" => [ "sequence" => 1, "name" => "Op 1", "details" => "Op 1 info." ],
+                                    "Op 2" => [ "sequence" => 2, "name" => "Op 2", "details" => "Op 2 info." ],
+                                    "Op 3" => [ "sequence" => 3, "name" => "Op 3", "details" => "Op 3 info." ],
+                                ]
+                            ],
+                            "ROUTING002" => [
+                                0 => [ /* 0 = Initial version... new versions of this routing will increment and be stored below */
+                                    "Initialisation" => [ 
+                                        "sequence" => 0, 
+                                        "name" => "Initialisation", 
+                                        "details" => 
+                                        "Scan here to initialise a new SN into this routing." 
+                                    ],
+
+                                    "SMT" => [ 
+                                        "sequence" => 1, 
+                                        "name" => "SMT", 
+                                        "details" => "Scan to record that all SMT components are fitted." 
+                                    ],
+
+                                    "AOI" => [ 
+                                        "sequence" => 2, 
+                                        "name" => "Automated Optical Inspection", 
+                                        "details" => "Scan to verify AOI has completed<br />Record defects as required using the Manage Defects screen." 
+                                    ],
+
+                                    "Conventional" => [ 
+                                        "sequence" => 3, 
+                                        "name" => "Conventional Load", 
+                                        "details" => "Fit conventional components." 
+                                    ],
+
+                                    "Test" => [ 
+                                        "sequence" => 4, 
+                                        "name" => "Test", 
+                                        "details" => "Test IAW TWIxxx." 
+                                    ],
+
+                                    "Final Inspection" => [ 
+                                        "sequence" => 5, 
+                                        "name" => "Final Inspection", 
+                                        "details" => "Perform final inspection checks.<br />Record defects as required using the Manage Defects screen." 
+                                    ],
+                                ]
                             ]
                         ],
                         "version" => 0,
-                        "publicKey" => ""
+                        "publicKey" => findPublicKeyByUser($user)
                     ]
                 ];
             }
@@ -210,30 +264,49 @@
             saveToFile($file, $data);
 
             return true; // return true/false/the value being requested
-
-
-
-
-
-
-
-
-
-
-            echo "updating defect...";
-            die();
-
-            return true;
         }
     }
 
     if (!function_exists('updateRouting')) {
-        function updateRouting( $updatedRouting, $user, $now) {
-            
-            echo "updating routing...";
-            die();
+        function updateRouting( $updatedRouting, $routingName, $user, $now) {
 
-            return true;
+            $version = -1; // To easily identify if anything goes wrong in the data
+            foreach ( $updatedRouting as $oldVersion => $newRouting ) {
+                $version = $oldVersion + 1;
+                $updatedRouting = $newRouting;
+            }
+
+            $namedRouting = ( getRoutings($user) )[$routingName];
+            $namedRouting[$version] = $updatedRouting;
+
+            $file = "../Communication/data/{$user}.json";
+            $port = findPortByUser($user);
+
+            $data = loadFromFile($file, $user);
+
+            // Perform some actions on the data
+            if ( array_key_exists($routingName, $data[$port]["data"]) ) {
+                // This is a good situation, defect exists and therefore can be modified... 
+
+                $blockchain = $data[$port]["data"][$routingName];
+
+                // Add block to blockchain ////
+                $blockchain = $namedRouting;
+
+            } else {
+                // SN has not yet had defects recorded
+                die("Something went wrong! You are attempting to update the status of a defect that doesnt exist. Please press \"back\" in your browser to continue.");
+            }
+
+            // Update the SN to the latest blockchain object
+            $data[$port]["data"][$routingName] = $blockchain;
+
+            // Increment the version number of this port's data to indicate a change has occurred
+            $data[$port]["version"]++;
+
+            saveToFile($file, $data);
+
+            return true; // return true/false/the value being requested
         }
     }
 
@@ -415,6 +488,7 @@
             // Check for required variables
             if ( 
                 !isset($updatedRouting) || 
+                !isset($routingName) || 
                 !isset($now)
             ) {
 
@@ -422,7 +496,7 @@
             }
 
             // Run the command
-            if ( updateRouting($updatedRouting, $user, $now) ) {
+            if ( updateRouting($updatedRouting, $routingName, $user, $now) ) {
                 
                 return true;
             }
@@ -511,5 +585,5 @@
             break;
     }
 
-    // If the actions didnt succeed, return false to let the application know if failed
+    // If the actions didnt succeed or request is not allowed, return false to let the application know if failed
     return false;

@@ -19,7 +19,8 @@
             $routing = $routings[$routingName];
             $action = $this->model->getVar("action");
 
-            //var_dump( $routing );
+            $mostRecentVersion = sizeof($routing) - 1;
+            $routing = $routing[$mostRecentVersion];
 
             $html = '
                 <div class="mainContent">
@@ -67,6 +68,50 @@
             $html .= '
                     </div>
 
+                    <div class="routingContainer">
+                        <br /><hr />
+                        <h3>Routing history <small><i>(Most recent version at the top)</i></small></h3>
+            ';
+
+            $versionedRoutings = array_reverse($routings[$routingName], true);
+
+            foreach ( $versionedRoutings as $version => $data ) {
+
+                $html .= '
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Version</th>
+                                <th>Sequence</th>
+                                <th>Operation</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                ';
+
+                foreach ( $data as $opName => $attribute ) {
+                    
+                    $html .= '
+                        <tr>
+                            <td>' . $version . '</td>
+                            <td>' . $attribute["sequence"] . '</td>
+                            <td>' . $attribute["name"] . '</td>
+                            <td>' . $attribute["details"] . '</td>
+                        </tr>
+                    ';
+                    
+                }
+                
+                $html .= '
+                        </tbody>
+                    </table>
+                    <br /> <!-- For spacing between routing versions --> 
+                ';
+            }
+
+            $html .= '
+                    </div>
                 </div>
             ';
 
@@ -80,10 +125,13 @@
             ';
 
             foreach ( $this->model->getRoutings() as $name => $details ) {
+                
+                $mostRecentVersion = sizeof($details) - 1;
+
                 $html .= '
                     <div class="flex routing">
                         <div style="width: 33%;">' . $name . '</div>
-                        <div style="width: 33%;">' . sizeof($details) . ' operations</div>
+                        <div style="width: 33%;">' . sizeof($details[$mostRecentVersion]) . ' operation(s)</div>
                         <div style="width: 33%;">
                             <a href="?p=Routings&action=viewRouting&routing=' . $name . '">
                                 <div class="btn btn-info">

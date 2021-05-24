@@ -17,10 +17,12 @@
             $job = $this->model->getVar("job");
             $operation = $this->model->getVar("operation");
 
-            if ( array_key_exists($job, $routings) && array_key_exists($operation, $routings[$job]) ) {
-                
-                $routing = $routings[$job];
-                $data = $routings[$job][$operation];
+            $mostRecentVersion = sizeof($routings[$job]) - 1;
+
+            if ( array_key_exists($job, $routings) && array_key_exists($operation, $routings[$job][$mostRecentVersion]) ) {
+                    
+                $routing = $routings[$job][$mostRecentVersion];
+                $data = $routing[$operation];
 
                 $this->model->setRouting( $routing );
 
