@@ -17,7 +17,9 @@
             $job = $this->model->getVar("job");
             $operation = $this->model->getVar("operation");
 
-            $mostRecentVersion = sizeof($routings[$job]) - 1;
+            if ( array_key_exists($job, $routings) ) { // Additional check in event of $_GET["job"] being left blank (clicking to visit ?p=Work without filling in a job)
+                $mostRecentVersion = sizeof($routings[$job]) - 1;
+            }
 
             if ( array_key_exists($job, $routings) && array_key_exists($operation, $routings[$job][$mostRecentVersion]) ) {
                     

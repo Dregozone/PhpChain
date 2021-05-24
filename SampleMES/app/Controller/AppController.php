@@ -7,9 +7,13 @@
         // Use API to check whether this combination of username and PKI are legit: If true, login, else block login and log user out (handled in Login)
         public function apiCheckCredentials( $username ) {
             
-            //
+            // Prepare values for API
+            $action = "checkCredentials";
 
-            return true;////debug
+            // Run API
+            $isValid = include '../Communication/API.php';
+
+            return $isValid;
         }
 
         // Use API to find the Job that a SN belongs to

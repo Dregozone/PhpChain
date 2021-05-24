@@ -1,5 +1,6 @@
 <?php 
 
+    /*
     // addTransaction
     $action = "addTransaction";
     $sn = "SN002";
@@ -7,6 +8,7 @@
     $job = "ROUTING001";
     $user = "anders";
     $now = (new \DateTime())->format("Y-m-d H:i:s");
+    */
 
     /*
     // addDefect
@@ -26,7 +28,7 @@
     */
 
     // Run API
-    $fromApi = include 'API.php';
+    //$fromApi = include 'API.php';
 
     // Debug
-    var_dump( $fromApi );
+    //var_dump( $fromApi );

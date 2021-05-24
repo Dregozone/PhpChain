@@ -1,5 +1,8 @@
 <?php 
 
+    // Require the classes
+    require_once("classes/Pki.php");
+
     // Specify valid requests for this API, all others will return value false with no actions taken
     $validActions = [
         "addTransaction",
@@ -9,7 +12,8 @@
         "getJobBySn",
         "getRoutings",
         "getDefects",
-        "updateRouting"
+        "updateRouting",
+        "checkCredentials"
     ];
 
     // Remove bad requests
@@ -17,7 +21,7 @@
         
         return false;
     }
-
+    
     // Handler functions
     if (!function_exists('findPortByUser')) {
         /** Return the port number of an existing user, otherwise false to say user does not exist
@@ -45,7 +49,11 @@
          */
         function findPublicKeyByUser($user) {
 
-            return '';////
+            $pkFile = "../Communication/data/pk{$user}.json";
+
+            $pk = json_decode(file_get_contents($pkFile), true);
+
+            return $pk;
         }
     }
 
@@ -417,6 +425,75 @@
         }
     }
 
+    /** Used when logging into the application
+     * 
+     *  1. Check whether the username has previously logged in and has a gossip'd public key value
+     *        else if there is a public key stored locally,
+     *        else    create a new pk/sk pair and save locally (this is the first time the user has logged in)
+     *  
+     *  2. Check whether a secret key file exists locally, theoretically if a SK does not exist then the user can NOT log in 
+     *        Then check for validity by encrypting the username value with the user provided SK, 
+     *        then decrypt the encrypted value using the publicly available public key to ensure the values match
+     *            If match, log the user in
+     *            Else, remain on login screen
+     * 
+     */
+    if (!function_exists('checkCredentials')) {
+        // Prepare command functions that interact with the data
+        function checkCredentials($username) {
+
+            $port = findPortByUser($username);
+
+            $dataFile = "../Communication/data/{$username}.json";
+            $data = loadFromFile($dataFile, $username);
+
+            $pkFile = "../Communication/data/pk{$username}.json";
+            $skFile = "../Communication/data/sk{$username}.json";
+
+            $createdNew = false;
+            [$sk, $pk] = Pki::generateKeyPair(); // Create a unique public/private key pair for this user
+
+
+            $hasLoggedIn = false;
+            // Check whether the user has previously logged in with a key pair
+            foreach ( $data as $port => $contents ) {
+
+                if ( $contents["user"] == $username && $contents["publicKey"] != "" ) { // This user has previously logged in and has a public key stored in the data
+                    $pk = $contents["publicKey"];
+                    $hasLoggedIn = true;
+                }
+            }
+
+            if ( $hasLoggedIn ) { // There is a public key available in the data file from a previous login
+                // $pk is already set
+            } else if ( file_exists($pkFile) ) { // Public Key file exists locally
+                $pk = json_decode(file_get_contents($pkFile), true);
+
+            } else { // Otherwise, create new as this is the first log in
+                $createdNew = true;
+                file_put_contents($pkFile, json_encode($pk)); // Save for use elsewhere in the system, next login this will already exist
+            }
+                
+            if ( $createdNew ) { // If the public key has been saved as new, also save a matching secret key for this user
+                file_put_contents($skFile, json_encode($sk)); // Save for use elsewhere in the system, next login this will already exist
+
+                return true; // This is the first time the user has logged in, newly created credentials are valid
+            }
+
+            if ( file_exists($skFile) ) { // Any user that has a valid SK stored locally can be assumed to be the genuine user
+                $sk = json_decode(file_get_contents($skFile), true);
+
+                // Encrypt the username using the available secret key
+                $encrypted = Pki::encrypt($username, $sk);
+
+                // Decrypt the encrypted username using the publicly available PK of that user to verify legitimacy
+                return Pki::isValid($username, $encrypted, $pk);
+            }
+
+            return false; // If the user does not have a SK, they can not possibly be the genuine user
+        }
+    }
+
     // Process API actions
     switch( $action ) {
         case "addTransaction": 
@@ -540,6 +617,19 @@
             }
 
             break;
+
+        case "checkCredentials": 
+
+            // Check for required variables
+            if ( 
+                !isset($username)
+            ) {
+
+                return false;
+            }
+
+            // Run the command
+            return checkCredentials($username);
 
         case "getJobBySn": 
     
