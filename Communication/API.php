@@ -102,13 +102,13 @@
                                         "details" => "Scan to record that all SMT components are fitted." 
                                     ],
 
-                                    "AOI" => [ 
+                                    "Automated Optical Inspection" => [ 
                                         "sequence" => 2, 
                                         "name" => "Automated Optical Inspection", 
                                         "details" => "Scan to verify AOI has completed<br />Record defects as required using the Manage Defects screen." 
                                     ],
 
-                                    "Conventional" => [ 
+                                    "Conventional Load" => [ 
                                         "sequence" => 3, 
                                         "name" => "Conventional Load", 
                                         "details" => "Fit conventional components." 
