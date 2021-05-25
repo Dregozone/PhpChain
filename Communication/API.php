@@ -2,6 +2,8 @@
 
     // Require the classes
     require_once("classes/Pki.php");
+    require_once("classes/Block.php");
+    require_once("classes/Blockchain.php");
 
     // Specify valid requests for this API, all others will return value false with no actions taken
     $validActions = [
@@ -158,8 +160,6 @@
 
             $data = loadFromFile($file, $user);
 
-            //var_dump($data);
-
             // Perform some actions on the data
             if ( array_key_exists($sn, $data[$port]["data"]) ) {
                 // SN has been initialised and found
@@ -182,9 +182,6 @@
 
             // Increment the version number of this port's data to indicate a change has occurred
             $data[$port]["version"]++;
-
-            //echo "<hr />";
-            //var_dump($data);
 
             saveToFile($file, $data);
 
@@ -675,5 +672,5 @@
             break;
     }
 
-    // If the actions didnt succeed or request is not allowed, return false to let the application know if failed
+    // If the actions didnt succeed or request is not allowed, return false to let the application know its request failed
     return false;

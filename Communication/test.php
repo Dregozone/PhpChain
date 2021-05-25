@@ -1,34 +1,24 @@
 <?php 
 
-    /*
-    // addTransaction
-    $action = "addTransaction";
-    $sn = "SN002";
-    $operation="Initialisation";
-    $job = "ROUTING001";
-    $user = "anders";
-    $now = (new \DateTime())->format("Y-m-d H:i:s");
-    */
+    require_once("classes/Block.php");
+    require_once("classes/Blockchain.php");
 
-    /*
-    // addDefect
-    $action = "addDefect";
-    $sn = "SN002";
-    $defectName = "Missing part";
-    $user = "anders";
-    $now = (new \DateTime())->format("Y-m-d H:i:s");
+    // Set up blockchain
+    $blockchain = new Blockchain( ["message" => "first block."] );
 
-    // updateDefect
-    $action = "updateDefect";
-    $sn = "SN002";
-    $defectId = 1;
-    $status = "Defective";
-    $user = "anders";
-    $now = (new \DateTime())->format("Y-m-d H:i:s");
-    */
+    // Add to blockchain
+    $blockchain->addBlock( new Block( ["message" => "second block."] ) );
 
-    // Run API
-    //$fromApi = include 'API.php';
+    echo "<hr /><pre>";
+    
+    foreach ( $blockchain->getBlockchain() as $block ) {
+        
+        //var_dump( $block->getInfo() );
+        var_dump( $block->getData() );
 
-    // Debug
-    //var_dump( $fromApi );
+    }
+
+    echo "</pre><hr />";
+
+    // Check that the hashes match etc... 
+    var_dump( $blockchain->isValid() );
