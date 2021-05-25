@@ -143,9 +143,11 @@
                             </div>
                     ';
 
-                    $defectsNewestFirst = array_reverse($defectSnGroup, true);
+                    $defectsNewestFirst = array_reverse($defectSnGroup->getBlockchain(), true);
                     $defectSnGroupToUse = [];
                     foreach ( $defectsNewestFirst as $defectRow ) {
+
+                        $defectRow = $defectRow->getData();
 
                         if ( !array_key_exists($defectRow["defectID"], $defectSnGroupToUse) ) {
                             // This defect ID hasnt been seen yet, this is the latest value to use. Therefore, add to "toUse" array 

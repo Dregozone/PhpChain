@@ -60,9 +60,10 @@
 
             // Build list of completed operations
             $completedOps = [];
-            foreach ( $this->model->getSnTransactions() as $transaction ) {
 
-                $completedOps[] = $transaction["operation"];
+            foreach ( unserialize($this->model->getSnTransactions())->getBlockchain() as $transaction ) {
+
+                $completedOps[] = $transaction->getData()["operation"];
             }
 
             $html .= '
@@ -109,8 +110,10 @@
                                     <tbody>
             ';
 
-            foreach ( $this->model->getSnTransactions() as $transaction ) {
+            foreach ( unserialize($this->model->getSnTransactions())->getBlockchain() as $transaction ) {
                 
+                $transaction = $transaction->getData();
+
                 $html .= '
                     <tr>
                         <td>' . $transaction["operation"] . ' (' . $transaction["job"] . ')</td>
@@ -162,15 +165,20 @@
                                     <tbody>
             ';
 
-            foreach ( $this->model->getSnDefects() as $defect ) {
+            if ( gettype( $this->model->getSnDefects() ) != "array" ) {
 
-                $html .= '
-                    <tr>
-                        <td>' . $defect["defectID"] . '</td>
-                        <td>' . $defect["defectName"] . '</td>
-                        <td>' . $defect["status"] . '</td>
-                    </tr>
-                ';
+                foreach ( $this->model->getSnDefects()->getBlockchain() as $defect ) {
+
+                    $defect = $defect->getData();
+
+                    $html .= '
+                        <tr>
+                            <td>' . $defect["defectID"] . '</td>
+                            <td>' . $defect["defectName"] . '</td>
+                            <td>' . $defect["status"] . '</td>
+                        </tr>
+                    ';
+                }
             }
 
             $html .= '

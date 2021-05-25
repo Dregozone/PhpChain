@@ -87,8 +87,6 @@
             $origRouting = $blockchain->getBlockchain();
             $origRouting = $origRouting[ sizeof($origRouting) - 1 ]->getData();
 
-            //var_dump( $origRouting );
-
             $newRouting = $origRouting;
             unset( $newRouting[$operationToRemove] );
 

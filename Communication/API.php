@@ -173,16 +173,19 @@
                 // SN has been initialised and found
                 
                 // Get the existing blockchain ////
-                $blockchain = $data[$port]["data"][$sn];
+                $blockchain = unserialize($data[$port]["data"][$sn]);
 
                 // Add block to blockchain ////
-                $blockchain[] = ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now];////replace with serialised blockchain object here
+                //$blockchain[] = ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now];////replace with serialised blockchain object here
+                $blockchain->addBlock( new Block( ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now] ) );
 
             } else {
                 // SN has not yet been initialised, this transaction is the first one recorded
 
                 // Create new blockchain AND add the genesis block to it ////
-                $blockchain = [["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now]];////replace with serialised blockchain object here
+                //$blockchain = [["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now]];////replace with serialised blockchain object here
+
+                $blockchain = new Blockchain( ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now] );
             }
 
             // Update the SN to the latest blockchain object
@@ -211,16 +214,17 @@
                 // SN has been initialised and found defects already recorded
                 
                 // Get the existing blockchain ////
-                $blockchain = $data[$port]["data"]["Defect" . $sn];
+                $blockchain = unserialize($data[$port]["data"]["Defect" . $sn]);
 
-                // Add block to blockchain ////
-                $blockchain[] = [ "defectID" => sizeof( $data[$port]["data"]["Defect" . $sn] ), "defectName" => $defectName, "status" => "Defective", "user" => $user, "datetime" => $now, "version" => 1 ];////replace with serialised blockchain object here
+                // Add block to blockchain
+                $blockchain->addBlock( new Block( [ "defectID" => sizeof( $blockchain->getBlockchain() ), "defectName" => $defectName, "status" => "Defective", "user" => $user, "datetime" => $now, "version" => 1 ] ) );
 
             } else {
                 // SN has not yet had defects recorded
 
-                // Create new blockchain AND add the genesis block to it ////
-                $blockchain = [["defectID" => 0, "defectName" => $defectName, "status" => "Defective", "user" => $user, "datetime" => $now, "version" => 1]];////replace with serialised blockchain object here
+                // Create new blockchain AND add the genesis block to it
+                $blockchain = new Blockchain( ["defectID" => 0, "defectName" => $defectName, "status" => "Defective", "user" => $user, "datetime" => $now, "version" => 1] );
+            
             }
 
             // Update the SN to the latest blockchain object
@@ -247,10 +251,13 @@
             if ( array_key_exists("Defect" . $sn, $data[$port]["data"]) ) {
                 // This is a good situation, defect exists and therefore can be modified... 
 
-                $blockchain = $data[$port]["data"]["Defect" . $sn];
+                $blockchain = unserialize($data[$port]["data"]["Defect" . $sn]);
+                $bcArray = $blockchain->getBlockchain();
 
-                foreach ( $blockchain as $block ) {
+                foreach ( $bcArray as $block ) {
                     
+                    $block = $block->getData();
+
                     if ( $defectId == $block["defectID"] ) {
                         // This is the defect being updated, store its current values
                         $copyOfOriginal = $block;
@@ -260,8 +267,8 @@
                 $defectName = $copyOfOriginal["defectName"];
                 $newVersion = $copyOfOriginal["version"] + 1;
 
-                // Add block to blockchain ////
-                $blockchain[] = [ "defectID" => $defectId, "defectName" => $defectName, "status" => $status, "user" => $user, "datetime" => $now, "version" => $newVersion ];////replace with serialised blockchain object here
+                // Add block to blockchain
+                $blockchain->addBlock( new Block( [ "defectID" => $defectId, "defectName" => $defectName, "status" => $status, "user" => $user, "datetime" => $now, "version" => $newVersion ] ) );
 
             } else {
                 // SN has not yet had defects recorded
@@ -351,7 +358,7 @@
                 
                 if ( strtoupper(substr($index, 0, 6)) == "DEFECT" ) {
                     // This is a Defect record, add to array to be returned
-                    $snDefects[str_replace("Defect", "", $index)] = $record;
+                    $snDefects[str_replace("Defect", "", $index)] = unserialize($record);
                 } else if ( strtoupper(substr($index, 0, 7)) == "ROUTING" ) {
                     // This is a routing record, skip
                 } else {
@@ -372,9 +379,9 @@
 
             $data = loadFromFile($file, $user);
 
-            if ( array_key_exists($sn, $data[findPortByUser($user)]["data"]) && array_key_exists(0, $data[findPortByUser($user)]["data"][$sn]) ) { // There is at least 1 transaction against this SN
-                
-                $snTransactions = $data[findPortByUser($user)]["data"][$sn][0]["job"];
+            if ( array_key_exists($sn, $data[findPortByUser($user)]["data"]) && array_key_exists(0, unserialize($data[findPortByUser($user)]["data"][$sn])->getBlockchain()) ) { // There is at least 1 transaction against this SN
+
+                $snTransactions = unserialize($data[findPortByUser($user)]["data"][$sn])->getBlockchain()[0]->getData()["job"];
 
             } else { // No transactions exist under this SN
 

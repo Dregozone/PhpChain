@@ -39,6 +39,11 @@
             // Run API
             $jobFromApi = include '../Communication/API.php';
 
+            if ( $jobFromApi === false ) {
+
+                return false;
+            }
+
             // FIND ROUTING INFO
             // Prepare values for API
             $action = "getRoutings";
@@ -55,12 +60,13 @@
             $user = $this->model->getUser();
             // Run API
             $transactionsFromApi = include '../Communication/API.php';
+
             $snTransactions = $transactionsFromApi[$sn];
 
             // Build array of operation names that have been completed  
             $snTransactionOperations = [];
-            foreach ( $snTransactions as $details ) {
-                $snTransactionOperations[] = $details["operation"];
+            foreach ( unserialize($snTransactions)->getBlockchain() as $details ) {
+                $snTransactionOperations[] = $details->getData()["operation"];
             }
 
             // Loop through all operations in this routing to find the first without a valid transaction recorded
