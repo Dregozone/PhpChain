@@ -31,7 +31,7 @@
             }
 
             if ( array_key_exists($job, $routings) ) {
-                $this->model->setRouting( $routings[$job] );
+                $this->model->setRouting( unserialize($routings[$job])->getBlockchain() );
             } else {
                 $this->model->setRouting( [] );
             }

@@ -80,11 +80,22 @@
             $operationToRemove = $this->model->getVar("operation");
 
             // Identify and remove the requested operation
-            $mostRecentVersion = sizeof($routings[$routingName]) - 1;
-            unset( $routings[$routingName][$mostRecentVersion][$operationToRemove] );
+            $mostRecentVersion = sizeof(unserialize($routings[$routingName])->getBlockchain()) - 1;
+
+            $blockchain = unserialize($routings[$routingName]);
+
+            $origRouting = $blockchain->getBlockchain();
+            $origRouting = $origRouting[ sizeof($origRouting) - 1 ]->getData();
+
+            //var_dump( $origRouting );
+
+            $newRouting = $origRouting;
+            unset( $newRouting[$operationToRemove] );
+
+            $blockchain->addBlock( new \Block( $newRouting ) );
 
             // Persist the change using the API (include version)
-            $this->apiUpdateRouting($routings[$routingName], $routingName, $this->model->getUser());
+            $this->apiUpdateRouting($blockchain, $routingName, $this->model->getUser());
 
             // Then redirect to clean URL for viewing the routing and able to choose a different action next
             $routing = $this->model->getVar("routing");

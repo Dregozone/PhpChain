@@ -70,11 +70,12 @@
             ';
 
             $routing = $this->model->getRouting();
+
             $mostRecentVersion = sizeof( $routing ) - 1;
 
             if ( array_key_exists($mostRecentVersion, $routing) ) {
-                
-                foreach ( $routing[$mostRecentVersion] as $name => $details ) {                
+
+                foreach ( $routing[$mostRecentVersion]->getData() as $name => $details ) {                
 
                     $isComplete = in_array($name, $completedOps);
                     $bg = $isComplete ? 'lightgreen' : 'lightgrey';

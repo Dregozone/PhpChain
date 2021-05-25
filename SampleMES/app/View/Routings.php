@@ -16,11 +16,11 @@
 
             $routings = $this->model->getRoutings();
             $routingName = $this->model->getVar("routing");
-            $routing = $routings[$routingName];
+            $routing = unserialize($routings[$routingName])->getBlockchain();
             $action = $this->model->getVar("action");
 
             $mostRecentVersion = sizeof($routing) - 1;
-            $routing = $routing[$mostRecentVersion];
+            $routing = $routing[$mostRecentVersion]->getData();
 
             $html = '
                 <div class="mainContent">
@@ -73,9 +73,12 @@
                         <h3>Routing history <small><i>(Most recent version at the top)</i></small></h3>
             ';
 
-            $versionedRoutings = array_reverse($routings[$routingName], true);
+            $currentRouting = unserialize($routings[$routingName])->getBlockchain();
+            $versionedRoutings = array_reverse($currentRouting, true);
 
             foreach ( $versionedRoutings as $version => $data ) {
+
+                $data = $data->getData();
 
                 $html .= '
                     <table class="table table-striped table-hover">
@@ -125,13 +128,15 @@
             ';
 
             foreach ( $this->model->getRoutings() as $name => $details ) {
-                
+
+                $details = unserialize($details)->getBlockchain();
+
                 $mostRecentVersion = sizeof($details) - 1;
 
                 $html .= '
                     <div class="flex routing">
                         <div style="width: 33%;">' . $name . '</div>
-                        <div style="width: 33%;">' . sizeof($details[$mostRecentVersion]) . ' operation(s)</div>
+                        <div style="width: 33%;">' . sizeof($details[$mostRecentVersion]->getData()) . ' operation(s)</div>
                         <div style="width: 33%;">
                             <a href="?p=Routings&action=viewRouting&routing=' . $name . '">
                                 <div class="btn btn-info">

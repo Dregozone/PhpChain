@@ -36,21 +36,21 @@
         
         public function mineBlock(int $difficulty) {
             
-            echo "Difficulty: {$difficulty}<br />";
+            //echo "Difficulty: {$difficulty}<br />";
             
             $zeros = '';
             for ( $i=0; $i<$difficulty; $i++ ) {
                 $zeros .= '0';
             }
             
-            echo "Starting to mine, looking for prefix {$zeros}<br />";
+            //echo "Starting to mine, looking for prefix {$zeros}<br />";
             
             while ( substr($this->curHash, 0, $difficulty) !== $zeros ) {
                 $this->nonce++;
                 $this->curHash = $this->calculateHash();
             }
             
-            echo "Block mined: {$this->curHash}<br />";
+            //echo "Block mined: {$this->curHash}<br />";
         }
 
         public function setPrevHash($prevHash) {

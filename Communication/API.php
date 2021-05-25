@@ -79,54 +79,50 @@
                     findPortByUser($user) => [
                         "user" => $user,
                         "data" => [
-                            "ROUTING001" => [
-                                0 => [ /* 0 = Initial version... new versions of this routing will increment and be stored below */
-                                    "Initialisation" => [ "sequence" => 0, "name" => "Initialisation", "details" => "Scan here to initialise a new SN into this routing." ],
-                                    "Op 1" => [ "sequence" => 1, "name" => "Op 1", "details" => "Op 1 info." ],
-                                    "Op 2" => [ "sequence" => 2, "name" => "Op 2", "details" => "Op 2 info." ],
-                                    "Op 3" => [ "sequence" => 3, "name" => "Op 3", "details" => "Op 3 info." ],
+                            "ROUTING001" => serialize( new Blockchain ( [
+                                "Initialisation" => [ "sequence" => 0, "name" => "Initialisation", "details" => "Scan here to initialise a new SN into this routing." ],
+                                "Op 1" => [ "sequence" => 1, "name" => "Op 1", "details" => "Op 1 info." ],
+                                "Op 2" => [ "sequence" => 2, "name" => "Op 2", "details" => "Op 2 info." ],
+                                "Op 3" => [ "sequence" => 3, "name" => "Op 3", "details" => "Op 3 info." ],
+                            ] )),
+                            "ROUTING002" => serialize( new Blockchain ( [
+                                "Initialisation" => [ 
+                                    "sequence" => 0, 
+                                    "name" => "Initialisation", 
+                                    "details" => 
+                                    "Scan here to initialise a new SN into this routing." 
+                                ],
+
+                                "SMT" => [ 
+                                    "sequence" => 1, 
+                                    "name" => "SMT", 
+                                    "details" => "Scan to record that all SMT components are fitted." 
+                                ],
+
+                                "Automated Optical Inspection" => [ 
+                                    "sequence" => 2, 
+                                    "name" => "Automated Optical Inspection", 
+                                    "details" => "Scan to verify AOI has completed<br />Record defects as required using the Manage Defects screen." 
+                                ],
+
+                                "Conventional Load" => [ 
+                                    "sequence" => 3, 
+                                    "name" => "Conventional Load", 
+                                    "details" => "Fit conventional components." 
+                                ],
+
+                                "Test" => [ 
+                                    "sequence" => 4, 
+                                    "name" => "Test", 
+                                    "details" => "Test IAW TWIxxx." 
+                                ],
+
+                                "Final Inspection" => [ 
+                                    "sequence" => 5, 
+                                    "name" => "Final Inspection", 
+                                    "details" => "Perform final inspection checks.<br />Record defects as required using the Manage Defects screen." 
                                 ]
-                            ],
-                            "ROUTING002" => [
-                                0 => [ /* 0 = Initial version... new versions of this routing will increment and be stored below */
-                                    "Initialisation" => [ 
-                                        "sequence" => 0, 
-                                        "name" => "Initialisation", 
-                                        "details" => 
-                                        "Scan here to initialise a new SN into this routing." 
-                                    ],
-
-                                    "SMT" => [ 
-                                        "sequence" => 1, 
-                                        "name" => "SMT", 
-                                        "details" => "Scan to record that all SMT components are fitted." 
-                                    ],
-
-                                    "Automated Optical Inspection" => [ 
-                                        "sequence" => 2, 
-                                        "name" => "Automated Optical Inspection", 
-                                        "details" => "Scan to verify AOI has completed<br />Record defects as required using the Manage Defects screen." 
-                                    ],
-
-                                    "Conventional Load" => [ 
-                                        "sequence" => 3, 
-                                        "name" => "Conventional Load", 
-                                        "details" => "Fit conventional components." 
-                                    ],
-
-                                    "Test" => [ 
-                                        "sequence" => 4, 
-                                        "name" => "Test", 
-                                        "details" => "Test IAW TWIxxx." 
-                                    ],
-
-                                    "Final Inspection" => [ 
-                                        "sequence" => 5, 
-                                        "name" => "Final Inspection", 
-                                        "details" => "Perform final inspection checks.<br />Record defects as required using the Manage Defects screen." 
-                                    ],
-                                ]
-                            ]
+                            ] ))
                         ],
                         "version" => 0,
                         "publicKey" => findPublicKeyByUser($user)
@@ -147,6 +143,18 @@
          *  @return none
          */
         function saveToFile($file, $data) {
+
+            foreach ( $data as $port => $dataPart ) {
+
+                foreach ( $dataPart["data"] as $index => $value ) {
+
+                    // Serialize ALL blockchain objects before committing to data, otherwise JSON will exclude these and not save the contents
+                    if ( gettype( $value ) == "object" ) {
+                        $data[$port]["data"][$index] = serialize($value);
+                    }
+                }
+            }
+
             file_put_contents($file, json_encode($data));
         }
     }
@@ -273,16 +281,7 @@
     }
 
     if (!function_exists('updateRouting')) {
-        function updateRouting( $updatedRouting, $routingName, $user, $now) {
-
-            $version = -1; // To easily identify if anything goes wrong in the data
-            foreach ( $updatedRouting as $oldVersion => $newRouting ) {
-                $version = $oldVersion + 1;
-                $updatedRouting = $newRouting;
-            }
-
-            $namedRouting = ( getRoutings($user) )[$routingName];
-            $namedRouting[$version] = $updatedRouting;
+        function updateRouting( $blockchain, $routingName, $user, $now) {
 
             $file = "../Communication/data/{$user}.json";
             $port = findPortByUser($user);
@@ -293,25 +292,20 @@
             if ( array_key_exists($routingName, $data[$port]["data"]) ) {
                 // This is a good situation, defect exists and therefore can be modified... 
 
-                $blockchain = $data[$port]["data"][$routingName];
+                // Update the routing to the latest blockchain object
+                $data[$port]["data"][$routingName] = $blockchain;
 
-                // Add block to blockchain ////
-                $blockchain = $namedRouting;
+                // Increment the version number of this port's data to indicate a change has occurred
+                $data[$port]["version"]++;
+
+                saveToFile($file, $data);
+
+                return true; // return true/false/the value being requested
 
             } else {
-                // SN has not yet had defects recorded
-                die("Something went wrong! You are attempting to update the status of a defect that doesnt exist. Please press \"back\" in your browser to continue.");
+                // Routing does not exist
+                die("Something went wrong! You are attempting to update the operation list of a routing that doesnt exist. Please press \"back\" in your browser to continue.");
             }
-
-            // Update the SN to the latest blockchain object
-            $data[$port]["data"][$routingName] = $blockchain;
-
-            // Increment the version number of this port's data to indicate a change has occurred
-            $data[$port]["version"]++;
-
-            saveToFile($file, $data);
-
-            return true; // return true/false/the value being requested
         }
     }
 
@@ -337,10 +331,6 @@
                     $snTransactions[$index] = $record;
                 }
             }
-
-            // ?? Remove the "UNDO-" operation records from the view.. they are however kept in the data
-            //var_dump( $snTransactions );
-            //die();
 
             return $snTransactions; // return true/false/the value being requested
         }

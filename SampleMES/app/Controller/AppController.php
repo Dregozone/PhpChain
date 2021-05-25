@@ -45,8 +45,9 @@
             $user = $this->model->getUser();
             // Run API
             $routingsFromApi = include '../Communication/API.php';
-            $mostRecentRouting = sizeof( $routingsFromApi[$jobFromApi] ) - 1;
-            $routing = $routingsFromApi[$jobFromApi][$mostRecentRouting];
+
+            $mostRecentRouting = sizeof( unserialize($routingsFromApi[$jobFromApi])->getBlockchain() ) - 1;
+            $routing = unserialize($routingsFromApi[$jobFromApi])->getBlockchain()[$mostRecentRouting]->getData();
 
             // FIND SN COMPLETED TRANSACTIONS
             // Prepare values for API
