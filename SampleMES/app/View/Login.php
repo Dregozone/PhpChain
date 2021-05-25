@@ -24,32 +24,25 @@
 
                             <label for="username">Username:</label>
                             <input class="form-control" type="text" name="username" id="username" placeholder="Username" value="' . getenv('USER') . '" />
-            ';
 
-            /*
-                            <label for="sk">Scan private key:</label>
-                            <input class="form-control" type="password" name="sk" id="sk" placeholder="Private key" />
-            */
-
-            $html .= '
                             <input class="btn btn-primary" type="submit" value="Login" aria-label="Login button" />
                         </fieldset>
                     </form>
                 </div>
-            ';
 
-            $html .= '
                 <div style="border: 2px dashed darkorange; margin: 1% 25%; width: 50%; padding: 1%; font-size: 90%;">
                     <h3 style="margin: 0; padding: 0; font-size: 170%;">Logging in:</h3>
                     
                     <p>
                         <u><b>First time logging in:</b></u><br />
-                            Enter username to join the application, this will generate and save a public/private key pair for you automatically, <b>KEEP THESE SAFE!</b>
+                            Enter username to join the application, this will generate and save a public/private key pair for you automatically.<br /> 
+                            Keep these safe as they\'re used each time you need to verify your identity within the application.
                     </p>
 
                     <p>
-                        <u><b>Return user:</b></u><br />
-                            Ensure you have your Secret Key file available at "Communication/data/{$user}.json" for identity verification.
+                        <u><b>Returning user:</b></u><br />
+                            Ensure you have your Private Key file available at "Communication/data/sk(user).json" for identity verification.<br />
+                            Then enter your returning username for verified login to the application.
                     </p>
 
                 </div>
