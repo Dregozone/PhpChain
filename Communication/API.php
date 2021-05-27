@@ -32,10 +32,10 @@
          * 
          *  @return int $port, This user's port number
          */
-        function findPortByUser($user) {
+        function findPortByUser($dirPrefix, $user) {
 
-            if ( file_exists("../Communication/data/".$user.".port") ) { // If the user has been on the network before
-                $port = (int)file_get_contents("../Communication/data/".$user.".port"); // Grab the port for this user
+            if ( file_exists("{$dirPrefix}Communication/data/".$user.".port") ) { // If the user has been on the network before
+                $port = (int)file_get_contents("{$dirPrefix}Communication/data/".$user.".port"); // Grab the port for this user
             } else {
                 $port = false; // User not found!
             }
@@ -49,9 +49,9 @@
          *  ... allow other users on the network to validate your transactions against your public key
          * 
          */
-        function findPublicKeyByUser($user) {
+        function findPublicKeyByUser($dirPrefix, $user) {
 
-            $pkFile = "../Communication/data/pk{$user}.json";
+            $pkFile = "{$dirPrefix}Communication/data/pk{$user}.json";
 
             $pk = json_decode(file_get_contents($pkFile), true);
 
@@ -70,13 +70,13 @@
          *  
          *  @return array $data, Contents of file in a single array 
          */
-        function loadFromFile($file, $user=null) {
+        function loadFromFile($dirPrefix, $file, $user=null) {
             
             if ( file_exists($file) ) { // File exists
                 $data = json_decode(file_get_contents($file), true);
             } else { // You are creating the file for the first time here
                 $data = [
-                    findPortByUser($user) => [
+                    findPortByUser($dirPrefix, $user) => [
                         "user" => $user,
                         "data" => [
                             "ROUTING001" => serialize( new Blockchain ( [
@@ -125,7 +125,7 @@
                             ] ))
                         ],
                         "version" => 0,
-                        "publicKey" => findPublicKeyByUser($user)
+                        "publicKey" => findPublicKeyByUser($dirPrefix, $user)
                     ]
                 ];
             }
@@ -161,12 +161,12 @@
 
     if (!function_exists('addTransaction')) {
         // Prepare command functions that interact with the data
-        function addTransaction($sn, $job, $operation, $user, $now) {
+        function addTransaction($dirPrefix, $sn, $job, $operation, $user, $now) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Perform some actions on the data
             if ( array_key_exists($sn, $data[$port]["data"]) ) {
@@ -202,12 +202,12 @@
 
     if (!function_exists('addDefect')) {
         // Prepare command functions that interact with the data
-        function addDefect($sn, $defectName, $user, $now) {
+        function addDefect($dirPrefix, $sn, $defectName, $user, $now) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Perform some actions on the data
             if ( array_key_exists("Defect" . $sn, $data[$port]["data"]) ) {
@@ -240,12 +240,12 @@
     }
 
     if (!function_exists('updateDefect')) {
-        function updateDefect( $sn, $defectId, $status, $user, $now) {
+        function updateDefect( $dirPrefix, $sn, $defectId, $status, $user, $now) {
             
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Perform some actions on the data
             if ( array_key_exists("Defect" . $sn, $data[$port]["data"]) ) {
@@ -288,12 +288,12 @@
     }
 
     if (!function_exists('updateRouting')) {
-        function updateRouting( $blockchain, $routingName, $user, $now) {
+        function updateRouting( $dirPrefix, $blockchain, $routingName, $user, $now) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Perform some actions on the data
             if ( array_key_exists($routingName, $data[$port]["data"]) ) {
@@ -318,16 +318,16 @@
 
     if (!function_exists('getTransactions')) {
         // Prepare command functions that interact with the data
-        function getTransactions($user) {
+        function getTransactions($dirPrefix, $user) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Filter to only SN transactions
             $snTransactions = [];
-            foreach ( $data[findPortByUser($user)]["data"] as $index => $record ) {
+            foreach ( $data[findPortByUser($dirPrefix, $user)]["data"] as $index => $record ) {
                 
                 if ( strtoupper(substr($index, 0, 6)) == "DEFECT" ) {
                     // This is a Defect record, skip
@@ -345,16 +345,16 @@
 
     if (!function_exists('getDefects')) {
         // Prepare command functions that interact with the data
-        function getDefects($user) {
+        function getDefects($dirPrefix, $user) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Filter to only SN defects
             $snDefects = [];
-            foreach ( $data[findPortByUser($user)]["data"] as $index => $record ) {
+            foreach ( $data[findPortByUser($dirPrefix, $user)]["data"] as $index => $record ) {
                 
                 if ( strtoupper(substr($index, 0, 6)) == "DEFECT" ) {
                     // This is a Defect record, add to array to be returned
@@ -372,16 +372,16 @@
 
     if (!function_exists('getJobBySn')) {
         // Prepare command functions that interact with the data
-        function getJobBySn($user, $sn) {
+        function getJobBySn($dirPrefix, $user, $sn) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
-            if ( array_key_exists($sn, $data[findPortByUser($user)]["data"]) && array_key_exists(0, unserialize($data[findPortByUser($user)]["data"][$sn])->getBlockchain()) ) { // There is at least 1 transaction against this SN
+            if ( array_key_exists($sn, $data[findPortByUser($dirPrefix, $user)]["data"]) && array_key_exists(0, unserialize($data[findPortByUser($dirPrefix, $user)]["data"][$sn])->getBlockchain()) ) { // There is at least 1 transaction against this SN
 
-                $snTransactions = unserialize($data[findPortByUser($user)]["data"][$sn])->getBlockchain()[0]->getData()["job"];
+                $snTransactions = unserialize($data[findPortByUser($dirPrefix, $user)]["data"][$sn])->getBlockchain()[0]->getData()["job"];
 
             } else { // No transactions exist under this SN
 
@@ -394,16 +394,16 @@
 
     if (!function_exists('getRoutings')) {
         // Prepare command functions that interact with the data
-        function getRoutings($user) {
+        function getRoutings($dirPrefix, $user) {
 
-            $file = "../Communication/data/{$user}.json";
-            $port = findPortByUser($user);
+            $file = "{$dirPrefix}Communication/data/{$user}.json";
+            $port = findPortByUser($dirPrefix, $user);
 
-            $data = loadFromFile($file, $user);
+            $data = loadFromFile($dirPrefix, $file, $user);
 
             // Filter to only routings
             $routings = [];
-            foreach ( $data[findPortByUser($user)]["data"] as $index => $record ) {
+            foreach ( $data[findPortByUser($dirPrefix, $user)]["data"] as $index => $record ) {
                 
                 if ( strtoupper(substr($index, 0, 6)) == "DEFECT" ) {
                     // This is a Defect record, skip
@@ -434,15 +434,15 @@
      */
     if (!function_exists('checkCredentials')) {
         // Prepare command functions that interact with the data
-        function checkCredentials($username) {
+        function checkCredentials($dirPrefix, $username) {
 
-            $port = findPortByUser($username);
+            $port = findPortByUser($dirPrefix, $username);
 
-            $dataFile = "../Communication/data/{$username}.json";
-            $data = loadFromFile($dataFile, $username);
+            $dataFile = "{$dirPrefix}Communication/data/{$username}.json";
+            $data = loadFromFile($dirPrefix, $dataFile, $username);
 
-            $pkFile = "../Communication/data/pk{$username}.json";
-            $skFile = "../Communication/data/sk{$username}.json";
+            $pkFile = "{$dirPrefix}Communication/data/pk{$username}.json";
+            $skFile = "{$dirPrefix}Communication/data/sk{$username}.json";
 
             $createdNew = false;
             [$sk, $pk] = Pki::generateKeyPair(); // Create a unique public/private key pair for this user
@@ -488,6 +488,12 @@
         }
     }
 
+    if ( isset($isUnitTest) ) { // This is a unit test
+        $dirPrefix = $isUnitTest;
+    } else { // This is an application request
+        $dirPrefix = "../";
+    }
+
     // Process API actions
     switch( $action ) {
         case "addTransaction": 
@@ -505,7 +511,7 @@
             }
 
             // Run the command
-            if ( addTransaction($sn, $job, $operation, $user, $now) ) {
+            if ( addTransaction($dirPrefix, $sn, $job, $operation, $user, $now) ) {
                 
                 return true;
             }
@@ -525,7 +531,7 @@
             }
 
             // Run the command
-            if ( addDefect($sn, $defectName, $user, $now) ) {
+            if ( addDefect($dirPrefix, $sn, $defectName, $user, $now) ) {
                 
                 return true;
             }
@@ -547,7 +553,7 @@
             }
 
             // Run the command
-            if ( updateDefect($sn, $defectId, $status, $user, $now) ) {
+            if ( updateDefect($dirPrefix, $sn, $defectId, $status, $user, $now) ) {
                 
                 return true;
             }
@@ -567,7 +573,7 @@
             }
 
             // Run the command
-            if ( updateRouting($updatedRouting, $routingName, $user, $now) ) {
+            if ( updateRouting($dirPrefix, $updatedRouting, $routingName, $user, $now) ) {
                 
                 return true;
             }
@@ -585,7 +591,7 @@
             }
 
             // Run the command
-            $transactions = getTransactions($user);
+            $transactions = getTransactions($dirPrefix, $user);
             if ( $transactions !== false ) {
                 
                 return $transactions;
@@ -604,7 +610,7 @@
             }
 
             // Run the command
-            $defects = getDefects($user);
+            $defects = getDefects($dirPrefix, $user);
             if ( $defects !== false ) {
                 
                 return $defects;
@@ -623,7 +629,7 @@
             }
 
             // Run the command
-            return checkCredentials($username);
+            return checkCredentials($dirPrefix, $username);
 
         case "getJobBySn": 
     
@@ -637,7 +643,7 @@
             }
 
             // Run the command
-            $job = getJobBySn($user, $sn);
+            $job = getJobBySn($dirPrefix, $user, $sn);
             if ( $job !== false ) {
                 
                 return $job;
@@ -656,7 +662,7 @@
             }
 
             // Run the command
-            $routings = getRoutings($user);
+            $routings = getRoutings($dirPrefix, $user);
             if ( $routings !== false ) {
                 
                 return $routings;

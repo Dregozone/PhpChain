@@ -1,6 +1,6 @@
 <?php
 
-class OverallTest extends PHPUnit\Framework\TestCase
+class PhpChainTest extends PHPUnit\Framework\TestCase
 {
     public function testUnitTestsAreWorking()
     {
@@ -8,4 +8,7 @@ class OverallTest extends PHPUnit\Framework\TestCase
 
         $this->assertEquals(7, $result);
     }
+
+    // check core files exist?
+
 }

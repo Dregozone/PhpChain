@@ -8,4 +8,17 @@ class SampleMESTest extends PHPUnit\Framework\TestCase
 
         $this->assertEquals(7, $result);
     }
+
+    // setVar()
+    // getVar()
+    // addNotice()
+    // getNotices()
+    // addWarning()
+    // getWarnings()
+    // addError()
+    // getErrors()
+    // cleanse()
+    // getUser()
+    // isLoggedIn()
+    
 }
