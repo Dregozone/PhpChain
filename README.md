@@ -13,12 +13,12 @@ This a PHP application with a custom framework that uses Blockchains (PHP object
 
 ### For development
 
-1. Navigate to `{projectDir}/Communication`
+1. Navigate to `PhpChain/Communication`
 2. Run `php -S localhost:8081 -t ../`. Simulating application run without starting the gossip network.
 
 ### To test using PHPUnit unit tests
 
-1. `Navigate to  {projectDir}/`
+1. Navigate to `PhpChain/`
 2. Run `./vendor/bin/phpunit --testdox`. This will run each component of the system's unit tests.
 
 ### Installation and deployment usage
