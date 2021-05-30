@@ -1,43 +1,36 @@
-# PHP Blockchain: Manufacturing Execution System
+# PhpChain: Decentralised Manufacturing Execution System that uses Blockchain storage
 
-## Getting Started
+This a PHP application with a custom framework that uses Blockchains (PHP objects) encoded for JSON storage locally. Then gossiped between a peer-to-peer network, using majority concensus to update from valid peer data and to communicate changes in the local user's data to the network.
 
-**CLI:**
+## Setup
 
-### Start first node on the network
+### Pre-requisites
 
-~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=central BlockchainDecentralisation/gossip.sh
+- You need at least PHP 7.3 (CLI) plus a few common PHP extensions.
+- You need to have `composer` installed.
+- You need to have `Firefox` installed.
+- You should be running Linux (Developed for Debian 10) to avoid encountering security issues with running the application start shell script.
 
+### For development
 
-### Log in a few test users
+1. Navigate to `{projectDir}/Communication`
+2. Run `php -S localhost:8081 -t ../`. Simulating application run without starting the gossip network.
 
-~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=anders PEER=central BlockchainDecentralisation/gossip.sh
-~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=emma PEER=central BlockchainDecentralisation/gossip.sh
+### To test using PHPUnit unit tests
 
-### Host the MES application
+1. `Navigate to  {projectDir}/`
+2. Run `./vendor/bin/phpunit --testdox`. This will run each component of the system's unit tests.
 
-~/Documents/Projects/PhpChain$ php -S localhost:8081
+### Installation and deployment usage
 
-### Access the MES application
+1. Clone the repo.
+2. Run `composer install` to install dependencies.
 
-http://localhost:8081/MESApplication
+If you are the first node on the network:
+3. Run `USER={user} ./run.sh`, where {user}=Your username. This will bootstrap the gossip network with only your user to begin with.
+Else
+3. Run `USER={user} PEER={peer} ./run.sh`, where {user}=Your username, {peer}=A known peer username. This will join the existing gossip network looking for the named peer node.
 
+4. Your Firefox browser will automatically open at the application login screen.
 
-
-
-
-## All in 1 shell script to run application:
-
-~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=test ./run.sh
-~/Documents/Projects/PhpChain/BlockchainDecentralisation$ USER=second PEER=test ./run.sh
-
-
-
----
-
-From {projectDir}/Communication, run:
-(testing)
-php -S localhost:8081 -t ../ --Simulating application run without starting the gossip network
-
-(full)
-USER={user} (PEER={peer}) ./run.sh --Where () is optional
+Enjoy!
