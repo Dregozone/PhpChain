@@ -1,5 +1,7 @@
 <?php 
 
+    require_once 'classes/Block.php';
+    require_once 'classes/Blockchain.php';
     require_once 'classes/Logger.php';
     require_once 'classes/State.php';
 
