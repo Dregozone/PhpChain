@@ -159,10 +159,68 @@
         }
     }
 
+    if (!function_exists('createLock')) {
+        /** Creates a .lock file that ensures no updates occur mid-transaction 
+         * 
+         *  @param string $dirPrefix, used in Unit tests from different base directory
+         *  @param string $user, this users lock file
+         * 
+         *  @return boolean, successfully created lock file
+         */
+        function createLock($dirPrefix, $user) {
+            
+            //printf("Locking...");
+            
+            while(!isLocked($dirPrefix, $user)) {
+                $file = fopen("{$dirPrefix}Communication/data/{$user}.lock", "w");
+                fclose($file);
+            }
+            
+            return true;
+        }
+    }
+
+    if (!function_exists('removeLock')) {
+        /** Deletes the users .lock file that ensures no updates occur mid-transaction 
+         * 
+         *  @param string $dirPrefix, used in Unit tests from different base directory
+         *  @param string $user, this users lock file
+         * 
+         *  @return boolean, successfully deleted the lock file
+         */
+        function removeLock($dirPrefix, $user) {
+            
+            //printf("Removing lock...");
+            
+            while(isLocked($dirPrefix, $user)) {
+                // Attempt to delete the lock file
+                unlink("{$dirPrefix}Communication/data/{$user}.lock");
+            }
+            
+            return true; // Return bool of whether the file still exists
+        }
+    }
+
+    if (!function_exists('isLocked')) {
+        /** Check whether a .lock file exists for this user 
+         * 
+         *  @param string $dirPrefix, used in Unit tests from different base directory
+         *  @param string $user, this users lock file
+         * 
+         *  @return boolean, is this user locked from updates from the gossip network
+         */
+        function isLocked($dirPrefix, $user) {
+            
+            return file_exists("{$dirPrefix}Communication/data/{$user}.lock");
+        }
+    }
+
     if (!function_exists('addTransaction')) {
         // Prepare command functions that interact with the data
         function addTransaction($dirPrefix, $sn, $job, $operation, $user, $now) {
 
+            createLock($dirPrefix, $user);
+            
             $file = "{$dirPrefix}Communication/data/{$user}.json";
             $port = findPortByUser($dirPrefix, $user);
 
@@ -172,19 +230,16 @@
             if ( array_key_exists($sn, $data[$port]["data"]) ) {
                 // SN has been initialised and found
                 
-                // Get the existing blockchain ////
+                // Get the existing blockchain
                 $blockchain = unserialize($data[$port]["data"][$sn]);
 
-                // Add block to blockchain ////
-                //$blockchain[] = ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now];////replace with serialised blockchain object here
+                // Add block to blockchain
                 $blockchain->addBlock( new Block( ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now] ) );
 
             } else {
                 // SN has not yet been initialised, this transaction is the first one recorded
 
-                // Create new blockchain AND add the genesis block to it ////
-                //$blockchain = [["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now]];////replace with serialised blockchain object here
-
+                // Create new blockchain AND add the genesis block to it
                 $blockchain = new Blockchain( ["job" => $job, "operation" => $operation, "user" => $user, "datetime" => $now] );
             }
 
@@ -196,6 +251,27 @@
 
             saveToFile($file, $data);
 
+            // Check the transaction was added
+            $data = loadFromFile($dirPrefix, $file, $user);
+            if ( array_key_exists($sn, $data[$port]["data"]) ) {
+                $blockchain = unserialize($data[$port]["data"][$sn]);
+            } else {
+                //printf("Retrying...");
+                sleep(0.25); // Wait for things to free up
+                addTransaction($dirPrefix, $sn, $job, $operation, $user, $now); // Then try again
+            }
+            $lastBlockData = $blockchain->getLastBlock()->getData();
+            $lastOpAdded = $lastBlockData["operation"];
+            
+            // If the op we are adding now is not equal to the last block added, then something went wrong and we need to try again
+            if ( $operation != $lastOpAdded ) {
+                //printf("Retrying...");
+                sleep(0.25); // Wait for things to free up
+                addTransaction($dirPrefix, $sn, $job, $operation, $user, $now); // Then try again
+            }
+            
+            removeLock($dirPrefix, $user);
+            
             return true; // return true/false/the value being requested
         }
     }
