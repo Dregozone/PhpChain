@@ -1,6 +1,7 @@
 <?php 
 
     // Require the classes
+    require_once("classes/Logger.php");
     require_once("classes/Pki.php");
     require_once("classes/Block.php");
     require_once("classes/Blockchain.php");
@@ -169,12 +170,14 @@
          */
         function createLock($dirPrefix, $user) {
             
-            //printf("Locking...");
+            Logger::msg("Locking user (Application)", $user);
             
             while(!isLocked($dirPrefix, $user)) {
                 $file = fopen("{$dirPrefix}Communication/data/{$user}.lock", "w");
                 fclose($file);
             }
+            
+            sleep(1); // Wait to allow gossip to register that its locked and to finish its processes
             
             return true;
         }
@@ -190,7 +193,9 @@
          */
         function removeLock($dirPrefix, $user) {
             
-            //printf("Removing lock...");
+            sleep(1); // Wait before letting gossip continue
+            
+            Logger::msg("Un-Locking user (Application)", $user);
             
             while(isLocked($dirPrefix, $user)) {
                 // Attempt to delete the lock file
@@ -220,6 +225,8 @@
         function addTransaction($dirPrefix, $sn, $job, $operation, $user, $now) {
 
             createLock($dirPrefix, $user);
+            
+            Logger::msg("Adding transaction...", $user);
             
             $file = "{$dirPrefix}Communication/data/{$user}.json";
             $port = findPortByUser($dirPrefix, $user);
@@ -269,6 +276,8 @@
                 sleep(0.25); // Wait for things to free up
                 addTransaction($dirPrefix, $sn, $job, $operation, $user, $now); // Then try again
             }
+            
+            Logger::msg("...Transaction added", $user);
             
             removeLock($dirPrefix, $user);
             

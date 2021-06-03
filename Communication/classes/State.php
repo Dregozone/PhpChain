@@ -158,25 +158,13 @@
                             $this->save();
                         }
                         
-                        //$this->save();//
-                        
-                        $this->update(json_decode($peerState, true));
-                    }             
-                    
-                    /*
-                    if (!$peerState) {
-                        unset($this->state[$p]);
-                        $this->save();
-                        
-                    } else {
                         $this->update(json_decode($peerState, true));
                     }
-                    */
                 }
                 
                 $this->reload();
                 
-                usleep(rand(600000, 6000000)); // this is 2x the original currently (300000, 3000000) = orig
+                usleep(rand(1000000, 2000000)); // (300000, 3000000) = orig
             }
         }
         
@@ -227,12 +215,30 @@
         }
 
         public function reload() {
-
+            
+            
+            // Check whether the MES application has already locked this users data for an update
+            if ( file_exists(str_replace(".json", ".lock", $this->file)) ) {
+                
+                return; // If locked, skip this action
+            }
+            
+            
+            Logger::msg("Reloading", $this->user);
+            
             $this->state = file_exists($this->file) ? json_decode(file_get_contents($this->file), true) : [];
         }
 
         public function update($state) {
-
+            
+            // Check whether the MES application has already locked this users data for an update
+            if ( file_exists(str_replace(".json", ".lock", $this->file)) ) {
+                
+                return; // If locked, skip this action
+            }
+            
+            Logger::msg("Updating", $this->user);
+            
             if (!$state) {
                 return;
             }
@@ -284,12 +290,20 @@
 
         public function save() {
             
+            // Check whether the MES application has already locked this users data for an update
+            if ( file_exists(str_replace(".json", ".lock", $this->file)) ) {
+                
+                return; // If locked, skip this action
+            }
+            
+            //Logger::msg("Saving", $this->user);
+            
             if (file_exists($this->file)) {
                 $states = json_decode(file_get_contents($this->file), true);
                 
                 if ( is_array($this->state) ) {
                     
-                    foreach ( $this->state as $port => $data ) { // Why is this throwing an error ////
+                    foreach ( $this->state as $port => $data ) {
                         $states[$port] = $data;
                     }
                 }
@@ -298,46 +312,19 @@
                 $states = $this->state; // Default create new states list
             }
             
-            file_put_contents($this->file, json_encode($states));
-        }
-    
-        /*
-        public static function updateValue( $user, $port, $value ) {
+            // Surpress warnings workaround, works functionally but CLI thought something was wrong?
+            @$ownGossipStateVer = $this->state[$this->port]["version"];
+            @$currentJsonFileVer = $states[$this->port]["version"];
             
-            $file = __DIR__.'/data/'.$user.'.json';
-            
-            $state = json_decode(file_get_contents($file), true);
-            
-            $oldVersion = $state[(int)$port]['version']; //Get current version
-            $newVersion = $curVersion = $oldVersion;
-            $newVersion++; // Increment version for this change
-            
-            // Sometimes the transactions would get lost in transmissions, implemented a rough loop to validate update was made before moving on
-            while ( $curVersion == $oldVersion ) { // While the update has not changed
+            // If my own gossip state version is lower or equal to the version currently in my json file, dont update
+            if ( $ownGossipStateVer <= $currentJsonFileVer ) {
                 
-                //printf("Updating %s on port %d to value %s (v %d to v %d) [Currently v %d]\n", $user, $port, $value, $oldVersion, $newVersion, $curVersion);
+                Logger::msg("Not saving from gossip, own data is more recent", $this->user);
                 
-                $state = json_decode(file_get_contents($file), true);
-                
-                $curVersion = $state[(int)$port]['version']; //Get current version              
-                
-                $state[(int)$port] = ['user' => $user, 'session' => $value, 'version' => $newVersion];
-            
-                if (file_exists($file)) {
-                    $states = json_decode(file_get_contents($file), true);
-
-                    foreach ( $state as $ports => $data ) {
-                        $states[$ports] = $data;
-                    }
-
-                } else {
-                    $states = $state; // Default create new states list
-                }
-
-                file_put_contents($file, json_encode($states));
+                return;
             }
             
-            return true;
+            Logger::msg("Saving from gossip", $this->user);
+            file_put_contents($this->file, json_encode($states));
         }
-        */
     }
