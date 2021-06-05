@@ -54,7 +54,7 @@
 
             $pkFile = "{$dirPrefix}Communication/data/pk{$user}.json";
 
-            $pk = json_decode(file_get_contents($pkFile), true);
+            $pk = file_exists($pkFile) ? json_decode(file_get_contents($pkFile), true) : "";
 
             return $pk;
         }

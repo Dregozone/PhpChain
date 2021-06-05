@@ -9,6 +9,7 @@
         private $port;
         private $peerPort;
         private $initial = [];
+        private $wasLocked = false;
 
         public function __construct($user, $port=null, $peerPort=null) {
 
@@ -87,7 +88,7 @@
 
             $pkFile = "data/pk{$user}.json";
 
-            $pk = json_decode(file_get_contents($pkFile), true);
+            $pk = file_exists($pkFile) ? json_decode(file_get_contents($pkFile), true) : "";
 
             return $pk;
         }
@@ -220,9 +221,20 @@
             // Check whether the MES application has already locked this users data for an update
             if ( file_exists(str_replace(".json", ".lock", $this->file)) ) {
                 
+                Logger::msg("Skipping: Application lock in place", $this->user);
+                
+                $this->wasLocked = true;
+                
                 return; // If locked, skip this action
             }
             
+            // After adding a transaction/defect/routingModification/etc. the app MUST save(), no reload() or update() can occur or it will be missed 
+            if ( $this->wasLocked ) {
+                
+                Logger::msg("Skipping: Application lock in place", $this->user);
+                
+                return;
+            }
             
             Logger::msg("Reloading", $this->user);
             
@@ -234,7 +246,19 @@
             // Check whether the MES application has already locked this users data for an update
             if ( file_exists(str_replace(".json", ".lock", $this->file)) ) {
                 
+                Logger::msg("Skipping: Application lock in place", $this->user);
+                
+                $this->wasLocked = true;
+                
                 return; // If locked, skip this action
+            }
+            
+            // After adding a transaction/defect/routingModification/etc. the app MUST save(), no reload() or update() can occur or it will be missed 
+            if ( $this->wasLocked ) {
+                
+                Logger::msg("Skipping: Application lock in place", $this->user);
+                
+                return;
             }
             
             Logger::msg("Updating", $this->user);
@@ -293,6 +317,10 @@
             // Check whether the MES application has already locked this users data for an update
             if ( file_exists(str_replace(".json", ".lock", $this->file)) ) {
                 
+                Logger::msg("Skipping: Application lock in place", $this->user);
+                
+                $this->wasLocked = true;
+                
                 return; // If locked, skip this action
             }
             
@@ -312,6 +340,7 @@
                 $states = $this->state; // Default create new states list
             }
             
+            /*
             // Surpress warnings workaround, works functionally but CLI thought something was wrong?
             @$ownGossipStateVer = $this->state[$this->port]["version"];
             @$currentJsonFileVer = $states[$this->port]["version"];
@@ -323,8 +352,15 @@
                 
                 return;
             }
+            */
             
             Logger::msg("Saving from gossip", $this->user);
             file_put_contents($this->file, json_encode($states));
+            
+            // After adding a transaction/defect/routingModification/etc. the app MUST save(), no reload() or update() can occur or it will be missed 
+            if ( $this->wasLocked ) {
+                
+                $this->wasLocked = false; // Now that we are processing a save, we can release the gossip again for updates
+            }
         }
     }
