@@ -25,15 +25,16 @@ This a PHP application with a custom framework that uses Blockchains (PHP object
 
 1. Clone the repo.
 2. Run `composer install` to install dependencies.
+3. Navigate to `PhpChain/Communication`
 
 If you are the first node on the network:
 
-3. Run `USER={user} ./run.sh`, where {user}=Your username. This will bootstrap the gossip network with only your user to begin with.
+4. Run `USER={user} ./run.sh`, where {user}=Your username. This will bootstrap the gossip network with only your user to begin with.
 
 Else
 
-3. Run `USER={user} PEER={peer} ./run.sh`, where {user}=Your username, {peer}=A known peer username. This will join the existing gossip network looking for the named peer node.
+4. Run `USER={user} PEER={peer} ./run.sh`, where {user}=Your username, {peer}=A known peer username. This will join the existing gossip network looking for the named peer node.
 
-4. Your Firefox browser will automatically open at the application login screen.
+5. Your Firefox browser will automatically open at the application login screen.
 
 Enjoy!
