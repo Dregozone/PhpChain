@@ -289,6 +289,10 @@
         // Prepare command functions that interact with the data
         function addDefect($dirPrefix, $sn, $defectName, $user, $now) {
 
+            createLock($dirPrefix, $user);
+            
+            Logger::msg("Adding defect...", $user);
+            
             $file = "{$dirPrefix}Communication/data/{$user}.json";
             $port = findPortByUser($dirPrefix, $user);
 
@@ -320,12 +324,20 @@
 
             saveToFile($file, $data);
 
+            removeLock($dirPrefix, $user);
+            
+            Logger::msg("...defect added", $user);
+            
             return true; // return true/false/the value being requested
         }
     }
 
     if (!function_exists('updateDefect')) {
         function updateDefect( $dirPrefix, $sn, $defectId, $status, $user, $now) {
+            
+            createLock($dirPrefix, $user);
+            
+            Logger::msg("Updating defect...", $user);
             
             $file = "{$dirPrefix}Communication/data/{$user}.json";
             $port = findPortByUser($dirPrefix, $user);
@@ -368,6 +380,10 @@
 
             saveToFile($file, $data);
 
+            removeLock($dirPrefix, $user);
+            
+            Logger::msg("...defect updated", $user);
+            
             return true; // return true/false/the value being requested
         }
     }
@@ -375,6 +391,10 @@
     if (!function_exists('updateRouting')) {
         function updateRouting( $dirPrefix, $blockchain, $routingName, $user, $now) {
 
+            createLock($dirPrefix, $user);
+            
+            Logger::msg("Updating routing...", $user);
+            
             $file = "{$dirPrefix}Communication/data/{$user}.json";
             $port = findPortByUser($dirPrefix, $user);
 
@@ -392,10 +412,18 @@
 
                 saveToFile($file, $data);
 
+                removeLock($dirPrefix, $user);
+            
+                Logger::msg("...routing updated", $user);
+                
                 return true; // return true/false/the value being requested
 
             } else {
                 // Routing does not exist
+                removeLock($dirPrefix, $user);
+            
+                Logger::msg("...failed to update routing", $user);
+                
                 die("Something went wrong! You are attempting to update the operation list of a routing that doesnt exist. Please press \"back\" in your browser to continue.");
             }
         }

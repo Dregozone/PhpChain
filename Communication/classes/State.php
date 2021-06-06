@@ -131,27 +131,31 @@
                         
                         $decodedPeerState = json_decode($peerState, true);
                         
-                        foreach ( $decodedPeerState as $port => $data ) {
-                            if ( 
-                                !isset($this->state[$port]) || 
-                                ( $this->state[$port]['version'] < $data['version'] ) || 
-                                ( $this->state[$port]['user'] == "" && $data['user'] != "" ) 
-                            ) { // If the port doesnt exist in my data, or the data for this port is incomplete, or peer version is higher
-                                
-                                //Logger::logMsg("Copying peer data from " . $data['user'] . " to " . $this->state[$port]['user'] . "", $this->user);
-                                printf("\nCopying peers data to mine...\nMy version: %d, Peer version: %d\n\n", $this->state[$port]['version'], $data['version']);
-                                //Logger::logMsg("Copying peer data from x to y", $this->user);
-                                
-                                // Copy my peers data to my own state
-                                $this->state[$port]['user'] = $data['user'];
-                                $this->state[$port]['data'] = $data['data'];
-                                $this->state[$port]['version'] = $data['version'];
-                                
-                                $hasChanged = true;
-                                
-                            } else {
-                                // Nothing copied
-                                //printf("\nNothing copied.");
+                        // While application lock is in place, this will not be an array, catch this here
+                        if ( gettype( $decodedPeerState ) == "array" ) {
+                            
+                            foreach ( $decodedPeerState as $port => $data ) {
+                                if ( 
+                                    !isset($this->state[$port]) || 
+                                    ( $this->state[$port]['version'] < $data['version'] ) || 
+                                    ( $this->state[$port]['user'] == "" && $data['user'] != "" ) 
+                                ) { // If the port doesnt exist in my data, or the data for this port is incomplete, or peer version is higher
+
+                                    //Logger::logMsg("Copying peer data from " . $data['user'] . " to " . $this->state[$port]['user'] . "", $this->user);
+                                    printf("\nCopying peers data to mine...\nMy version: %d, Peer version: %d\n\n", $this->state[$port]['version'], $data['version']);
+                                    //Logger::logMsg("Copying peer data from x to y", $this->user);
+
+                                    // Copy my peers data to my own state
+                                    $this->state[$port]['user'] = $data['user'];
+                                    $this->state[$port]['data'] = $data['data'];
+                                    $this->state[$port]['version'] = $data['version'];
+
+                                    $hasChanged = true;
+
+                                } else {
+                                    // Nothing copied
+                                    //printf("\nNothing copied.");
+                                }
                             }
                         }
                         
