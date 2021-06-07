@@ -160,6 +160,8 @@
                                             <th>Defect ID</th>
                                             <th>Defect Name</th>
                                             <th>Status</th>
+                                            <th>User</th>
+                                            <th>Time changed</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -176,6 +178,8 @@
                             <td>' . $defect["defectID"] . '</td>
                             <td>' . $defect["defectName"] . '</td>
                             <td>' . $defect["status"] . '</td>
+                            <td>' . $defect["user"] . '</td>
+                            <td>' . $defect["datetime"] . '</td>
                         </tr>
                     ';
                 }
