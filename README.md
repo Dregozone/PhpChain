@@ -8,7 +8,7 @@ This a PHP application with a custom framework that uses Blockchains (PHP object
 
 - You need at least PHP 7.3 (CLI) plus a few common PHP extensions.
 - You need to have `composer` installed.
-- You need to have `Firefox` installed.
+- You need to have `firefox` installed (Launches Firefox by default).
 - You should be running Linux (Developed for Debian 10) to avoid encountering security issues with running the application start shell script.
 
 ### For development

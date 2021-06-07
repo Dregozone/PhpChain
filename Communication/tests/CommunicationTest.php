@@ -116,5 +116,6 @@ class CommunicationTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(gettype($actual), "array");
     }
 
-    
+    // testCanCreateCheckForAndRemoveLockFile() // 3 assertions
+    // 
 }
