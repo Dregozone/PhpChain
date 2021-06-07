@@ -177,7 +177,8 @@
                 fclose($file);
             }
             
-            sleep(1); // Wait to allow gossip to register that its locked and to finish its processes
+            // Was working fully with 1s delay, reduced to 0.3 for testing, can revert if needed...
+            sleep(0.3); // Wait to allow gossip to register that its locked and to finish its processes
             
             return true;
         }
@@ -193,7 +194,8 @@
          */
         function removeLock($dirPrefix, $user) {
             
-            sleep(1); // Wait before letting gossip continue
+            // Was working fully with 1s delay, reduced to 0.3 for testing, can revert if needed...
+            sleep(0.3); // Wait before letting gossip continue
             
             Logger::msg("Un-Locking user (Application)", $user);
             

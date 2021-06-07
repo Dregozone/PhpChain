@@ -116,6 +116,17 @@ class CommunicationTest extends PHPUnit\Framework\TestCase
         $this->assertEquals(gettype($actual), "array");
     }
 
-    // testCanCreateCheckForAndRemoveLockFile() // 3 assertions
-    // 
+    public function testCanCreateCheckForAndRemoveLockFile() {
+        
+        include 'Communication/API.php'; // Include the functions to create, checkFor and remove .lock files
+        
+        createLock("", "UnitTests");
+        $this->assertTrue( file_exists("Communication/data/UnitTests.lock") );
+        
+        // Check using the API that the lock is in place
+        $this->assertTrue( isLocked("", "UnitTests") );
+        
+        removeLock("", "UnitTests");
+        $this->assertFalse( file_exists("Communication/data/UnitTests.lock") );
+    }
 }
