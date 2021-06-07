@@ -3,10 +3,13 @@
 class SampleMESTest extends PHPUnit\Framework\TestCase
 {
     private $model;
+    private $isUnitTest;
     
     public function setUp() : void {
         parent::setUp();
 
+        $this->isUnitTest = "";
+        
         if ( !class_exists("app\Model\AppModel") ) {
             require 'SampleMES/app/Model/AppModel.php';
         }
@@ -43,7 +46,7 @@ class SampleMESTest extends PHPUnit\Framework\TestCase
     
     public function testCanAddAndReadWarnings() 
     {
-        $msg = "Notice";
+        $msg = "Warning";
         $this->model->addWarning($msg);
         
         $this->assertEquals( $msg, $this->model->getWarnings()[0] );
@@ -51,7 +54,7 @@ class SampleMESTest extends PHPUnit\Framework\TestCase
     
     public function testCanAddAndReadErrors() 
     {
-        $msg = "Notice";
+        $msg = "Error";
         $this->model->addError($msg);
         
         $this->assertEquals( $msg, $this->model->getErrors()[0] );
@@ -63,5 +66,27 @@ class SampleMESTest extends PHPUnit\Framework\TestCase
         $goodMsg = htmlspecialchars(trim($badMsg)); // This is the minimum level of security we need in the application
         
         $this->assertEquals( $goodMsg, $this->model->cleanse($badMsg) );
+    }
+    
+    public function testCanCheckValidCredentials() 
+    {
+        
+        $username = "UnitTests";
+        $isUnitTest = $this->isUnitTest;
+        $action = "checkCredentials";
+        $actual = include "Communication/API.php";
+        
+        $this->assertTrue( $actual );
+    }
+    
+    public function testCanCheckInvalidCredentials() 
+    {
+        
+        $username = "OtherUser";
+        $isUnitTest = $this->isUnitTest;
+        $action = "checkCredentials";
+        $actual = include "Communication/API.php";
+        
+        $this->assertFalse( $actual );
     }
 }
