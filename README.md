@@ -13,7 +13,7 @@ This a PHP application with a custom framework that uses Blockchains (PHP object
 
 ### Installation
 
-1. Clone the repo.
+1. Clone the repo: `git clone https://github.com/Dregozone/PhpChain` (Or alternative method).
 2. Navigate to `PhpChain/`
 3. Run `composer install` to install dependencies.
 
@@ -21,6 +21,7 @@ This a PHP application with a custom framework that uses Blockchains (PHP object
 
 1. Navigate to `PhpChain/Communication`
 2. Run `php -S localhost:8081 -t ../`
+3. Open browser at `localhost:8081/SampleMES`
 
 #### To test (Using PHPUnit unit tests)
 
