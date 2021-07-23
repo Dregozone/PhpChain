@@ -42,12 +42,31 @@
                     if ( $operationDetails["name"] != "Initialisation" ) {
                         $html .= '
                             <div style="width: 20%;">
-                                <a href="?p=Routings&action=removeOperation&routing=' . $routingName . '&operation=' . $operationDetails["name"] . '">
-                                    <div class="btn btn-danger">Delete</div>
-                                </a>
-                                <a>
-                                    <div class="btn btn-secondary" onclick="alert(\'Might implement later...\');">Add operation before</div>
-                                </a>
+                            
+                                <div>
+                                    <input 
+                                        type="text" 
+                                        class="form-control" 
+                                        style="display: inline-block; width: 79%;" 
+                                        name="opName" 
+                                        id="opName' . $operationDetails["sequence"] . '" 
+                                        placeholder="Add operation before" 
+                                        aria-label="Operation name" 
+                                    />
+                                    
+                                    <a>
+                                        <div class="btn btn-success" style="width: 14%;" onclick="addOperation(\'' . $operationDetails["sequence"] . '\', \'' . $routingName . '\');">
+                                            +
+                                        </div>
+                                    </a>
+                                </div>
+                                
+                                <div>
+                                    <a href="?p=Routings&action=removeOperation&routing=' . $routingName . '&operation=' . $operationDetails["name"] . '">
+                                        <div class="btn btn-danger" style="width: 95%; margin-top: 0.5%;">Delete this operation</div>
+                                    </a>
+                                </div>
+                                
                             </div>
                         ';
                     } else {

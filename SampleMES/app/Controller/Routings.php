@@ -56,18 +56,52 @@
             $routings = $this->apiGetRoutings();
 
             $this->model->setRoutings( $routings );
-
+            
+            // Cleanse user input
+            $routing = $_GET["routing"] ?? false;
+            $operation = $_GET["operation"] ?? false;
+            $sequence = $_GET["sequence"] ?? false;
+            
+            if ( 
+                $routing === false || 
+                $operation === false || 
+                $sequence === false
+            ) {
+                
+                $this->model->addError("Failed to add operation, please report this issue!");
+                
+                return;
+            }
+            
+            $blockchain = unserialize($routings[$routing]);
+            
+            $origRouting = $blockchain->getBlockchain();
+            $origRouting = $origRouting[ sizeof($origRouting) - 1 ]->getData();
+            
+            // Prep new routing for modifications
+            $newRouting = $origRouting;
+            
             // Check for uniqueness, the name MUST be unique to this routing as is used as a UID
-            ////
+            if ( !in_array( $operation, $origRouting ) ) { // Ensure operation being added has a unique name
 
-            // Add new operation BEFORE the operation provided
-            ////
-
-            // Persist the change using API (include version)
-            ////
-
-            // Redirect as required and show notice confirming the addition, send to editRouting page for this routing to show the change with notice
-            ////
+                // Add new operation BEFORE the operation provided
+                array_splice( $newRouting, $sequence, 0, [$operation => [
+                    "sequence" => ($sequence - 0.1),
+                    "name" => $operation,
+                    "details" => "..."
+                ]]);
+            
+            } else {
+                $this->model->addError("Operation name is not valid, please report this issue!");
+            }
+            
+            $blockchain->addBlock( new \Block( $newRouting ) );
+            
+            // Persist the change using the API (include version)
+            $this->apiUpdateRouting($blockchain, $routing, $this->model->getUser());            
+            
+            // Then redirect to clean URL for viewing the routing and able to choose a different action next
+            header("location: ?p=Routings&action=editRouting&routing=" . $routing . "&msg=UpdatedRouting&do=AddOperation&operation=" . $operation); ///DO THIS////
         }
 
         public function removeOperation() {
