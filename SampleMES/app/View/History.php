@@ -61,6 +61,14 @@
             // Build list of completed operations
             $completedOps = [];
 
+            // Check whether the SN exists, if doesnt yet exist then display an error
+            if ( sizeof( $this->model->getSnTransactions() ) == 0 ) {
+                
+                $this->model->addError("This SN does not yet exist.");
+                
+                return '';
+            }
+            
             foreach ( unserialize($this->model->getSnTransactions())->getBlockchain() as $transaction ) {
 
                 $completedOps[] = $transaction->getData()["operation"];

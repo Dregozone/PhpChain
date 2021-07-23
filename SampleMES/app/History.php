@@ -39,7 +39,7 @@
                 echo $view->button("Routings", "Routings");
             echo $view->endNav();
 
-            echo $view->errors();
+            //echo $view->errors();
             echo $view->warnings();
 
             if ( sizeof( $model->getErrors() ) > 0 ) { die(); } // If there are errors, display them but dont display the remaining view
@@ -51,6 +51,8 @@
 
             echo $view->notices();
             echo $view->showHistoryScreen();
+        
+            echo $view->errors(); // Show errors later on this screen to catch issue where the SN doesnt exist
 
         echo $view->endContainer();
         
