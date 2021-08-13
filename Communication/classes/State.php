@@ -21,45 +21,45 @@
                 "user" => $user,
                 "data" => [
                     "ROUTING001" => serialize( new Blockchain ( [
-                        "Initialisation" => [ "sequence" => 0, "name" => "Initialisation", "details" => "Scan here to initialise a new SN into this routing." ],
-                        "Op 1" => [ "sequence" => 1, "name" => "Op 1", "details" => "Op 1 info." ],
-                        "Op 2" => [ "sequence" => 2, "name" => "Op 2", "details" => "Op 2 info." ],
-                        "Op 3" => [ "sequence" => 3, "name" => "Op 3", "details" => "Op 3 info." ],
+                        "Initialisation" => [ "sequence" => 10, "name" => "Initialisation", "details" => "Scan here to initialise a new SN into this routing." ],
+                        "Op 1" => [ "sequence" => 20, "name" => "Op 1", "details" => "Op 1 info." ],
+                        "Op 2" => [ "sequence" => 30, "name" => "Op 2", "details" => "Op 2 info." ],
+                        "Op 3" => [ "sequence" => 40, "name" => "Op 3", "details" => "Op 3 info." ],
                     ] )),
                     "ROUTING002" => serialize( new Blockchain ( [
                         "Initialisation" => [ 
-                            "sequence" => 0, 
+                            "sequence" => 10, 
                             "name" => "Initialisation", 
                             "details" => 
                             "Scan here to initialise a new SN into this routing." 
                         ],
 
                         "SMT" => [ 
-                            "sequence" => 1, 
+                            "sequence" => 20, 
                             "name" => "SMT", 
                             "details" => "Scan to record that all SMT components are fitted." 
                         ],
 
                         "Automated Optical Inspection" => [ 
-                            "sequence" => 2, 
+                            "sequence" => 30, 
                             "name" => "Automated Optical Inspection", 
                             "details" => "Scan to verify AOI has completed<br />Record defects as required using the Manage Defects screen." 
                         ],
 
                         "Conventional Load" => [ 
-                            "sequence" => 3, 
+                            "sequence" => 40, 
                             "name" => "Conventional Load", 
                             "details" => "Fit conventional components." 
                         ],
 
                         "Test" => [ 
-                            "sequence" => 4, 
+                            "sequence" => 50, 
                             "name" => "Test", 
                             "details" => "Test IAW TWIxxx." 
                         ],
 
                         "Final Inspection" => [ 
-                            "sequence" => 5, 
+                            "sequence" => 60, 
                             "name" => "Final Inspection", 
                             "details" => "Perform final inspection checks.<br />Record defects as required using the Manage Defects screen." 
                         ]

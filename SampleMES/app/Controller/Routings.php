@@ -84,18 +84,91 @@
             // Check for uniqueness, the name MUST be unique to this routing as is used as a UID
             if ( !in_array( $operation, $origRouting ) ) { // Ensure operation being added has a unique name
 
+                $newSequence = $sequence - 1;
+                $opToAdd = [
+                        $operation => [
+                            "sequence" => ($newSequence),
+                            "name" => $operation,
+                            "details" => "..."
+                        ]
+                ];
+                
+                ////
+                /*
+                echo "<hr /><h2>Adding operation...</h2>";
+                
+                echo "<h3>Orig routing:</h3>";
+                echo "<pre>";
+                print_r($origRouting);
+                echo "</pre>";
+                */
+                
+                /*
+                echo "<h3>To add:</h3>";
+                echo "<pre>";
+                print_r($opToAdd);
+                echo "</pre>";
+                */
+                
+                $found = 0;
+                $prevSequence = 10; // Start at initialisation
+                $freshRouting = [];
+                
+                foreach ( $origRouting as $origOperation => $details ) {
+                    
+                    if ( ($details["sequence"] > $newSequence) && $found == 0 ) {
+                        // Add new operation                        
+                        $opToAdd[$operation]["sequence"] = $details["sequence"] - (int)floor(($details["sequence"] - $prevSequence) / 2);
+                        $freshRouting[$operation] = [
+                            "sequence" => $opToAdd[$operation]["sequence"],
+                            "name" => $operation,
+                            "details" => $opToAdd[$operation]["details"]
+                        ];
+                        
+                        // Add normal next operation
+                        $freshRouting[$origOperation] = $details;
+                        
+                        $found = 1;
+                    } else {
+                        $prevSequence = $details["sequence"];
+                        $freshRouting[$origOperation] = $details;
+                    }
+                    
+                }
+                
+                /*
+                echo "<h3>New routing:</h3>";
+                echo "<pre>";
+                print_r($freshRouting);
+                echo "</pre>";
+                
+                die();
+                */
+                ////                
+                
                 // Add new operation BEFORE the operation provided
+                
                 array_splice( $newRouting, $sequence, 0, [$operation => [
                     "sequence" => ($sequence - 0.1),
                     "name" => $operation,
                     "details" => "..."
                 ]]);
+                
             
             } else {
                 $this->model->addError("Operation name is not valid, please report this issue!");
             }
             
-            $blockchain->addBlock( new \Block( $newRouting ) );
+            /*
+            echo '<hr /><pre>';
+            var_dump( $newRouting );
+            echo '<hr />';
+            var_dump( $freshRouting );
+            echo '</pre><hr />';
+            die();
+            */
+            
+            $blockchain->addBlock( new \Block( $freshRouting ) );
             
             // Persist the change using the API (include version)
             $this->apiUpdateRouting($blockchain, $routing, $this->model->getUser());            
